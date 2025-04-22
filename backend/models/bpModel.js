@@ -1,0 +1,25 @@
+import mongoose, { Schema } from "mongoose";
+
+const bpSchema = new mongoose.Schema({
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    systolic: {
+        type: Number,
+        default: 0
+    },
+    diastolic: {
+        type: Number,
+        default: 0
+    },
+    timing: {
+        type: String,
+        enum: ['morning', 'afternoon', 'evening'],
+        required: true
+    }
+}, { timestamps: true })
+
+const BP = mongoose.model('BP', bpSchema);
+
+export default BP;

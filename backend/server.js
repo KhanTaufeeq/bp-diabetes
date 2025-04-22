@@ -1,0 +1,22 @@
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { userRoutes } from './router/userRouter.js';
+import { connectDB } from './config/db.js';
+
+dotenv.config();    // load environment variables
+
+const app = express();
+
+// Middleware
+app.use(express.json())  // parse json request
+app.use(cors())  // enable cors
+
+connectDB();
+
+// Route
+app.use('/api/user', userRoutes);
+
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
