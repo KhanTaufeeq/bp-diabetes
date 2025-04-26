@@ -8,7 +8,7 @@ dotenv.config();
 export const registerUser = async (req, res) => {
   const { fullName, userName, email, password } = req.body;
 
-  try {
+  try { 
     // find email and username
     const existingUserEmail = await User.findOne({email})
     const existingUsername = await User.findOne({userName})
@@ -79,7 +79,8 @@ export const loginUser = async (req, res) => {
     }
   }
   catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Registration error: ', error.stack);
+    res.status(500).json({ message: "something went wrong!" , error: error.message});
   }
 }
 
