@@ -1,34 +1,33 @@
 import User from "../models/userModel.js";
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 export const authMiddleware = async (req, res, next) => {
-    const { refreshToken } = req.body;
+  const accessToken = req.headers["authorization"]?.replace("Bearer ", "");
 
-    if (!refreshToken) return res.status(401).json({ error: "Refresh token required!" });
+  if (!accessToken)
+    return res
+      .status(401)
+      .json({ error: "No Access token, Authentication denied!" });
 
-    const user = await User.findOne({ refreshToken });
-    if (!user) return res.status(403).json({ error: "Invalid refresh token" })
-    
-    // verify refresh token
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
-        if(err) return res.status(403).json({err: "Invalid token"})
-    })
-    
-    // generate new access token
-    const newAccessToken = jwt.sign(
-        {
-            id: user._id,
-        },
-        process.env.JWT_REFRESH_SECRET,
-        {expiresIn: '15m'}
-    )
+  const user = await User.findOne({ accessToken });
+  if (!user)
+    return res
+      .status(401)
+      .json({ error: "User with this token does not exist" });
 
-    req.user = user;
+  // verify access token
+  try {
+    const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
 
-    res.json({ accessToken: newAccessToken });
+    const userId = decoded.userId;
+
+    req.userId = userId;
 
     next();
-}
+  } catch (error) {
+    return res.status(401).json({ error: "Invalid or expired token" });
+  }
+};

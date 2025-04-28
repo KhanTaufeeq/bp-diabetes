@@ -8,6 +8,8 @@ dotenv.config();
 export const registerUser = async (req, res) => {
   const { fullName, userName, email, password } = req.body;
 
+  console.log(req);
+
   try { 
     // find email and username
     const existingUserEmail = await User.findOne({email})
@@ -56,23 +58,16 @@ export const loginUser = async (req, res) => {
       // create jwt
       const accessToken = jwt.sign(
         {
-          id: user._id,
+          userId: user._id,
         },
         process.env.JWT_ACCESS_SECRET,
-        {expiresIn: '15m'}   // token expires in 15 minutes
-      )
-      const refreshToken = jwt.sign(
-        {
-          id: user._id,
-        },
-        process.env.JWT_REFRESH_SECRET,
-        {expiresIn: '2d'}
+        {expiresIn: '1h'}   // token expires in 15 minutes
       )
       
       // store refresh token in the database
-      user.refreshToken = refreshToken;
+      user.accessToken = accessToken;
       await user.save();
-      return res.json({ accessToken, refreshToken });
+      return res.json({ accessToken});
     }
     else {
       return res.status(401).json({message : 'Invalid credentials!'})

@@ -13,7 +13,7 @@ export const addSugar = async (req, res) => {
         .status(409)
         .json({ error: "sugar data must be given in postive integer form" });
     }
-    const sugar = new Sugar({ userId: req.user._id, fasting, random });
+    const sugar = new Sugar({ user: req.userId, fasting, random });
     await sugar.save();
     res.status(200).json(sugar);
   } catch (error) {
@@ -24,20 +24,15 @@ export const addSugar = async (req, res) => {
 };
 
 export const getSugar = async (req, res) => {
-  const { refreshToken } = req.body;
 
-  if (!refreshToken) {
-    return res.status(401).json({ error: "Refresh token is required!" });
-  }
+  const userId = req.userId;
+  const sugar = await Sugar.findOne({ userId });
 
-  const userId = req.user._id;
-  const user = await User.findOne({ userId });
+  const { fasting, random } = sugar;
 
-  const { fasting, random } = user;
-
-  if (fasting && random) {
+  if (fasting || random) {
     return { fasting, random };
   } else {
-    return res.status(401).json({ error: "there is no sugar data!" });
+    return res.status(401).json({ error: "there is no diabetes data yet!" });
   }
 };
