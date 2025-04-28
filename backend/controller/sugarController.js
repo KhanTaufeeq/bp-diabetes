@@ -24,15 +24,26 @@ export const addSugar = async (req, res) => {
 };
 
 export const getSugar = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const sugar = await Sugar.findOne({ userId });
 
-  const userId = req.userId;
-  const sugar = await Sugar.findOne({ userId });
+    if (!sugar)
+      return res
+        .status(401)
+        .json({ message: "There is no diabetes data available for this user" });
 
-  const { fasting, random } = sugar;
+    const { fasting, random } = sugar;
 
-  if (fasting || random) {
-    return { fasting, random };
-  } else {
-    return res.status(401).json({ error: "there is no diabetes data yet!" });
+    if (fasting) {
+      return res.status(200).json({ 'fasting': fasting });
+    }
+    if (random) {
+      return res.status(200).json({'random': random });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "There is something wrong", error: error.message });
   }
 };

@@ -5,7 +5,7 @@ import express from 'express';
 export const sugarRoutes = express.Router();
 
 // user register route
-sugarRoutes.post('/add', addSugar);
+sugarRoutes.post('/add', authMiddleware,addSugar);
 
 // user login route 
 sugarRoutes.get('/get', authMiddleware, getSugar);

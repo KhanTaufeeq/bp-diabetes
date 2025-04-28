@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { userRoutes } from './router/userRouter.js';
+import { sugarRoutes } from './router/sugarRouter.js';
 import { connectDB } from './config/db.js';
 
 dotenv.config();    // load environment variables
@@ -16,6 +17,7 @@ connectDB();
 
 // Route
 app.use('/api/user', userRoutes);
+app.use('/api/sugar', sugarRoutes);
 
 
 const PORT = process.env.PORT || 3000;
