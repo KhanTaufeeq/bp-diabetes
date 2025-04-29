@@ -5,18 +5,15 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const authMiddleware = async (req, res, next) => {
-  const accessToken = req.headers["authorization"]?.replace("Bearer ", "");
+  console.log(req.headers);
+  const accessToken = req.headers.authorization?.replace("Bearer ", "");
+  console.log(accessToken);
+  console.log(typeof accessToken);
 
-  if (!accessToken)
+  if (accessToken === '')
     return res
       .status(401)
       .json({ error: "No Access token, Authentication denied!" });
-
-  const user = await User.findOne({ accessToken });
-  if (!user)
-    return res
-      .status(401)
-      .json({ error: "User with this token does not exist" });
 
   // verify access token
   try {

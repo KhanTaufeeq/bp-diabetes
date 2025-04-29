@@ -17,6 +17,8 @@ function Signin() {
       })
       .then((res) => {
         console.log(res.data);
+        localStorage.setItem('accessToken', res.data.accessToken);
+        localStorage.setItem('userName', userName);
         navigate("/dashboard");
       })
       .catch((error) => {

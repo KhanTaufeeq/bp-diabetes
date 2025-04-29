@@ -50,7 +50,7 @@ export const loginUser = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ message: "username does not exist!" });
+        .json({ message: "user does not exist!" });
     }
 
     // verify password
@@ -61,12 +61,9 @@ export const loginUser = async (req, res) => {
           userId: user._id,
         },
         process.env.JWT_ACCESS_SECRET,
-        {expiresIn: '1h'}   // token expires in 15 minutes
+        {expiresIn: '1h'}   // token expires in 1 hour
       )
       
-      // store refresh token in the database
-      user.accessToken = accessToken;
-      await user.save();
       return res.json({"accessToken":accessToken});
     }
     else {
