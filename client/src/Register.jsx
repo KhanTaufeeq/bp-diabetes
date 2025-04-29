@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { Link } from "react-router";
 
 function Register() {
   const [fullName, setFullName] = useState("");
@@ -102,6 +103,8 @@ function Register() {
           <button type="submit" className="cursor-pointer">
             Register
           </button>
+          <br/>
+          <Link to='/signin'>Already a member?</Link>
         </form>
       </div>
     </div>

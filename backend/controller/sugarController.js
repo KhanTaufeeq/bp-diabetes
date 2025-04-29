@@ -1,5 +1,4 @@
-import Sugar from "../models/sugarModel";
-import User from "../models/userModel";
+import Sugar from '../models/sugarModel.js'
 
 export const addSugar = async (req, res) => {
   const { fasting, random } = req.body;

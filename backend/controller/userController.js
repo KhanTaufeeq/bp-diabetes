@@ -67,7 +67,7 @@ export const loginUser = async (req, res) => {
       // store refresh token in the database
       user.accessToken = accessToken;
       await user.save();
-      return res.json({ accessToken});
+      return res.json({"accessToken":accessToken});
     }
     else {
       return res.status(401).json({message : 'Invalid credentials!'})

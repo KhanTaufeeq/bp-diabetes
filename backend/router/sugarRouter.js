@@ -8,4 +8,4 @@ export const sugarRoutes = express.Router();
 sugarRoutes.post('/add', authMiddleware,addSugar);
 
 // user login route 
-sugarRoutes.get('/get', authMiddleware, getSugar);
+sugarRoutes.get('', authMiddleware, getSugar);
