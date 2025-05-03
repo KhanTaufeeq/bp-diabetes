@@ -7,9 +7,14 @@ function Dashboard() {
   const accessToken = localStorage.getItem("accessToken");
   console.log(accessToken);
   const [sugar, setSugar] = useState([]);
+  const [bp, setBP] = useState([]);
+  const [systolic, setSystolic] = useState(0);
+  const [diastolic, setDiastolic] = useState(0);
+  const [timing, setTiming] = useState('morning');
   const [fasting, setFasting] = useState(0);
   const [random, setRandom] = useState(0);
   const [isAddSugar, setIsAddSugar] = useState(false);
+  const [isAddBP, setIsAddBP] = useState(false)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,6 +27,22 @@ function Dashboard() {
       .then((res) => {
         console.log(res.data.sugar);
         setSugar(res.data.sugar);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+    useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/bp", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data.bp);
+        setBP(res.data.bp);
       })
       .catch((error) => {
         console.log(error);
@@ -47,6 +68,34 @@ function Dashboard() {
       .then((res) => {
         console.log(res.data);
         navigate("/dashboard");
+        setIsAddSugar(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+    const addBP = (e) => {
+    e.preventDefault();
+    axios
+      .post(
+        "http://localhost:5000/api/bp/add",
+        {
+          systolic: parseInt(systolic),
+          diastolic: parseInt(diastolic),
+          timing: timing,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+        navigate("/dashboard");
+        setIsAddBP(false);
       })
       .catch((error) => {
         console.log(error);
@@ -60,62 +109,35 @@ function Dashboard() {
       setIsAddSugar(true);
     }
   }
+  const toggleAddBP = () => {
+    if (isAddBP == true) {
+      setIsAddBP(false);
+    } else {
+      setIsAddBP(true);
+    }
+  }
 
   return (
-    <div className="bg-black p-4 rounded-xl w-[70%] mx-auto">
+    <div className="flex w-[70%]">
+      <div className="bg-black p-5 rounded-xl mx-auto">
       <div className="flex justify-between">
-        <button className="text-white cursor-pointer" onClick={toggleAddSugar}>Add new sugar reading</button>
-        <button className="text-white cursor-pointer">See all sugar readings</button>
+        <button className="text-white cursor-pointer" onClick={toggleAddBP}>Add new bp reading</button>
+        <button className="text-white cursor-pointer">See all bp readings</button>
       </div>
-      {isAddSugar && <div className="bg-black p-4 rounded-xl">
-        <form onSubmit={addSugar}>
+      {isAddBP && <div className="bg-black p-4 rounded-xl">
+        <form onSubmit={addBP}>
           <div>
             <label
-              htmlFor="fasting"
+              htmlFor="systolic"
               className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl text-white"
             >
-              Fasting
+              Systolic
             </label>
             <input
               type="number"
-              name="fasting"
-              id="fasting"
-              className="bg-[#242424] outline-none p-1 rounded text-white"
-              onChange={(event) => setFasting(event.target.value)}
-            />
-          </div>
-          <div className="mt-4 mb-4">
-            <label
-              htmlFor="random"
-              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl text-white"
-            >
-              Random
-            </label>
-            <input
-              type="number"
-              name="random"
-              id="random"
-              className="bg-[#242424] outline-none p-1 rounded text-white"
-              onChange={(event) => setRandom(event.target.value)}
-            />
-          </div>
-          <button className="cursor-pointer text-white" type="submit">Add Sugar</button>
-        </form>
-      </div>}
-      <div className="flex justify-around items-center">
-        <div>
-          {sugar[0] && (
-            <p className="text-white text-5xl">Fasting: {sugar[0].fasting}</p>
-          )}
-        </div>
-        <div>
-          {sugar[0] && (
-            <p className="text-white text-5xl">Random: {sugar[0].random}</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default Dashboard;
+              name="systolic"
+              id="systolic"
+                className="bg-[#242424] outline-none p-1 rounded text-xl text-white"
+                required
+              />
+              </div>

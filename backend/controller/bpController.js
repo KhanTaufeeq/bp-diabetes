@@ -7,7 +7,7 @@ export const addBP = async (req, res) => {
     if (!systolic || !diastolic) {
       return res
         .status(409)
-        .json({ error: "Both systolic and diastolic must be given" });
+        .json({ message: "Both systolic and diastolic must be given" });
     }
     if (
       (systolic && typeof systolic !== "number") ||
@@ -27,13 +27,8 @@ export const addBP = async (req, res) => {
         error: "Diastolic BP data must be given in postive integer form",
       });
     }
-    let bp;
 
-    if (timing) {
-      bp = new BP({ user: req.userId, systolic, diastolic, timing });
-    } else {
-      bp = new BP({ user: req.userId, systolic, diastolic });
-    }
+    const bp = new BP({ user: req.userId, systolic, diastolic, timing });
     await bp.save();
     return res
       .status(200)
@@ -47,7 +42,7 @@ export const getBP = async (req, res) => {
   try {
     const user = req.userId;
     console.log(user);
-    const bp = await BP.findOne({ user }).sort({ createdAt: -1 });
+    const bp = await BP.find({ user }).sort({ createdAt: -1 });
     console.log(bp);
 
     if (!bp) {
