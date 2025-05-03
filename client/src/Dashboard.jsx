@@ -131,7 +131,7 @@ function Dashboard() {
               htmlFor="systolic"
               className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl text-white"
             >
-              Systolic
+                Systolic
             </label>
             <input
               type="number"
