@@ -31,7 +31,7 @@ export const getSugar = async (req, res) => {
   try {
     const user = req.userId;
     console.log(user);
-    const sugar = await Sugar.findOne({ user }).sort({createdAt: -1});
+    const sugar = await Sugar.find({ user }).sort({createdAt: -1});
 
     console.log(sugar);
 

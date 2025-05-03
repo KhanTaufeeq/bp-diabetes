@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
 function Dashboard() {
-    const accessToken = localStorage.getItem("accessToken");
-    console.log(accessToken);
-  const [sugar, setSugar] = useState({});
+  const accessToken = localStorage.getItem("accessToken");
+  console.log(accessToken);
+  const [sugar, setSugar] = useState([]);
   const [fasting, setFasting] = useState(0);
-    const [random, setRandom] = useState(0);
-    const navigate = useNavigate();
+  const [random, setRandom] = useState(0);
+  const [isAddSugar, setIsAddSugar] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -27,8 +28,8 @@ function Dashboard() {
       });
   }, []);
 
-    const addSugar = (e) => {
-        e.preventDefault();
+  const addSugar = (e) => {
+    e.preventDefault();
     axios
       .post(
         "http://localhost:5000/api/sugar/add",
@@ -39,26 +40,34 @@ function Dashboard() {
         {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       )
       .then((res) => {
-          console.log(res.data);
-          navigate('/dashboard')
+        console.log(res.data);
+        navigate("/dashboard");
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
+  const toggleAddSugar = () => {
+    if (isAddSugar == true) {
+      setIsAddSugar(false);
+    } else {
+      setIsAddSugar(true);
+    }
+  }
+
   return (
     <div className="bg-black p-4 rounded-xl w-[70%] mx-auto">
       <div className="flex justify-between">
-        <button className="text-white">Add new reading</button>
-        <button className="text-white">See all readings</button>
+        <button className="text-white cursor-pointer" onClick={toggleAddSugar}>Add new sugar reading</button>
+        <button className="text-white cursor-pointer">See all sugar readings</button>
       </div>
-      {/* <div className="bg-black p-4 rounded-xl">
+      {isAddSugar && <div className="bg-black p-4 rounded-xl">
         <form onSubmit={addSugar}>
           <div>
             <label
@@ -92,18 +101,18 @@ function Dashboard() {
           </div>
           <button className="cursor-pointer text-white" type="submit">Add Sugar</button>
         </form>
-      </div> */}
-          <div className="flex justify-around items-center">
-              <div>
-                  {
-                  sugar && (<p className="text-white text-5xl">Fasting: {sugar.fasting}</p>)
-              }
-              </div>
-              <div>
-                  {
-                  sugar && (<p className="text-white text-5xl">Random: {sugar.random}</p>)
-              }
-              </div>
+      </div>}
+      <div className="flex justify-around items-center">
+        <div>
+          {sugar[0] && (
+            <p className="text-white text-5xl">Fasting: {sugar[0].fasting}</p>
+          )}
+        </div>
+        <div>
+          {sugar[0] && (
+            <p className="text-white text-5xl">Random: {sugar[0].random}</p>
+          )}
+        </div>
       </div>
     </div>
   );

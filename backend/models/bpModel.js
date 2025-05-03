@@ -20,6 +20,4 @@ const bpSchema = new mongoose.Schema({
     }
 }, { timestamps: true })
 
-const BP = mongoose.model('BP', bpSchema);
-
-export default BP;
+export const BP = mongoose.model('BP', bpSchema);
