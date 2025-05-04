@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
-function Dashboard() {
+export default function Dashboard() {
   const accessToken = localStorage.getItem("accessToken");
   console.log(accessToken);
   const [sugar, setSugar] = useState([]);
@@ -119,13 +119,13 @@ function Dashboard() {
 
   return (
     <div className="flex w-[70%]">
-      <div className="bg-black p-5 rounded-xl mx-auto">
+      <div className="bg-black p-8 rounded-xl mx-auto">
         <div className="flex justify-between">
           <button className="text-white cursor-pointer" onClick={toggleAddBP}>
-            Add new bp reading
+            Add BP
           </button>
           <button className="text-white cursor-pointer">
-            See all bp readings
+            Get BP
           </button>
         </div>
         {isAddBP && (
@@ -164,32 +164,47 @@ function Dashboard() {
                 />
               </div>
               <div>
-                <label htmlFor="timing">Timing</label>
+                <label htmlFor="timing" className="text-white">Timing</label>
                 <select
                   name="timing"
                   id="timing"
                   onChange={(e) => setTiming(e.target.value)}
                   value={timing}
+                  className="text-white"
                 >
                   <option value="morning">morning</option>
                   <option value="afternoon">afternoon</option>
                   <option value="evening">evening</option>
                 </select>
               </div>
-              <button type="submit" className="cursor-pointer">
+              <button type="submit" className="cursor-pointer text-white">
                 Add BP
               </button>
             </form>
           </div>
         )}
+        <div className="text-center mt-5">
+          {
+          bp[0] && (<p className="text-white text-2xl">Systolic: { bp[0].systolic}</p>)
+          }
+          {
+          bp[0] && (<p className="text-white text-2xl mt-2 mb-2">Diastolic: { bp[0].diastolic}</p>)
+          }
+          {
+          bp[0] && (<p className="text-white text-2xl mb-2">when: { bp[0].timing}</p>)
+          }
+          {
+          bp[0] && (<p className="text-white">Date & Time: { bp[0].createdAt}</p>)
+        }
+        </div>
       </div>
-      <div className="bg-black p-5 rounded-xl mx-auto">
+      <div className="bg-black p-8 rounded-xl mx-auto">
         <div className="flex justify-between">
           <button className="text-white cursor-pointer" onClick={toggleAddSugar}>
-            Add new sugar reading
+            Add Sugar
           </button>
           <button className="text-white cursor-pointer">
-            See all sugar readings
+            Get Sugar
           </button>
         </div>
         {isAddSugar && (
@@ -227,12 +242,23 @@ function Dashboard() {
                   required
                 />
               </div>
-              <button type="submit" className="cursor-pointer">
+              <button type="submit" className="cursor-pointer text-white">
                 Add Sugar
               </button>
             </form>
           </div>
         )}
+        <div className="text-center mt-5">
+          {
+          sugar[0] && (<p className="text-white text-2xl">Fasting: { sugar[0].fasting}</p>)
+          }
+          {
+          sugar[0] && (<p className="text-white text-2xl mt-2 mb-2">Random: { sugar[0].random}</p>)
+          }
+          {
+          sugar[0] && (<p className="text-white">Date & Time: { sugar[0].createdAt}</p>)
+          }
+        </div>
       </div>
     </div>
   );
