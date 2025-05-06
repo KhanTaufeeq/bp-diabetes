@@ -2,10 +2,11 @@ import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import {jwtDecode} from 'jwt-decode';
 
 export default function Dashboard() {
-  const accessToken = localStorage.getItem("accessToken");
-  console.log(accessToken);
+  let accessToken;
+
   const [sugar, setSugar] = useState([]);
   const [bp, setBP] = useState([]);
   const [systolic, setSystolic] = useState(0);
@@ -16,6 +17,27 @@ export default function Dashboard() {
   const [isAddSugar, setIsAddSugar] = useState(false);
   const [isAddBP, setIsAddBP] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      navigate('/signin');
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(accessToken);
+      const currentTime = Date.now() / 1000;
+      if (decoded.exp < currentTime) {
+        localStorage.removeItem('accessToken');
+        navigate('/signin');
+      }
+    } catch (error) {
+      // invalid token format
+      localStorage.removeItem('accessToken');
+      navigate('/signin');
+    }
+  }, [navigate]);
 
   useEffect(() => {
     axios
@@ -48,6 +70,11 @@ export default function Dashboard() {
         console.log(error);
       });
   }, []);
+
+  const logout = () => {
+    localStorage.removeItem('accessToken');
+    navigate('/signin');
+  }
 
   const addSugar = (e) => {
     e.preventDefault();
@@ -118,14 +145,16 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex w-[70%]">
-      <div className="bg-black p-8 rounded-xl mx-auto">
+    <div>
+      <button type="button" onClick={logout} className="cursor-pointer text-white mb-5 bg-black p-1 w-25 rounded-xl">Logout</button>
+    <div className="flex w-[100%] gap-5">
+      <div className="bg-black p-8 rounded-xl">
         <div className="flex justify-between">
           <button className="text-white cursor-pointer" onClick={toggleAddBP}>
             Add BP
           </button>
           <button className="text-white cursor-pointer">
-            Get BP
+            Get All BP
           </button>
         </div>
         {isAddBP && (
@@ -198,13 +227,13 @@ export default function Dashboard() {
         }
         </div>
       </div>
-      <div className="bg-black p-8 rounded-xl mx-auto">
+      <div className="bg-black p-8 rounded-xl">
         <div className="flex justify-between">
           <button className="text-white cursor-pointer" onClick={toggleAddSugar}>
             Add Sugar
           </button>
-          <button className="text-white cursor-pointer">
-            Get Sugar
+          <button className="text-white cursor-pointer" onClick={() => navigate('/sugar')}>
+            Get All Sugar
           </button>
         </div>
         {isAddSugar && (
@@ -260,6 +289,7 @@ export default function Dashboard() {
           }
         </div>
       </div>
-    </div>
+      </div>
+      </div>
   );
 }

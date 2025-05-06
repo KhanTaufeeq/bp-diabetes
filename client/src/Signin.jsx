@@ -66,6 +66,9 @@ function Signin() {
             Login
           </button>
         </form>
+        <button type="button" className="cursor-pointer ml-5" onClick={() => navigate('/')}>
+            Not a member?
+          </button>
       </div>
     </div>
   );
