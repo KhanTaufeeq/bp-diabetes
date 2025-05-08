@@ -34,14 +34,14 @@ function Sugar() {
   }, []);
 
   return (
-    <div>
+    <div className="h-screen p-4">
       <button className="cursor-pointer text-white mb-5 bg-black p-1 w-30 rounded-xl" onClick={() => navigate('/dashboard')}>
         My Dashboard
       </button>
       <div>
         {sugar.map((data) => {
           return (
-            <div key={data._id} className="bg-black p-4 rounded-xl ">
+            <div key={data._id} className="bg-black p-4 rounded-xl mb-2">
               <p className="text-white">Fasting: {data.fasting}</p>
               <p className="text-white">Random: {data.random}</p>
               <p className="text-white">Date & Time: {data.createdAt}</p>
