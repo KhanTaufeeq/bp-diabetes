@@ -3,21 +3,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 
-function AddBP({ accessToken, setIsAddBP }) {
-  const [systolic, setSystolic] = useState(0);
-  const [diastolic, setDiastolic] = useState(0);
-  const [timing, setTiming] = useState("morning");
+function AddSugar({ accessToken, setIsAddSugar }) {
+  const [fasting, setFasting] = useState(0);
+  const [random, setRandom] = useState(0);
   const navigate = useNavigate();
 
-  const addBP = (e) => {
+  const addSugar = (e) => {
     e.preventDefault();
     axios
       .post(
-        "http://localhost:5000/api/bp/add",
+        "http://localhost:5000/api/sugar/add",
         {
-          systolic: parseInt(systolic),
-          diastolic: parseInt(diastolic),
-          timing: timing,
+          fasting: parseInt(fasting),
+          random: parseInt(random),
         },
         {
           headers: {
@@ -29,7 +27,7 @@ function AddBP({ accessToken, setIsAddBP }) {
       .then((res) => {
         console.log(res.data);
         navigate("/dashboard");
-        setIsAddBP(false);
+        setIsAddSugar(false);
       })
       .catch((error) => {
         console.log(error);
@@ -37,54 +35,38 @@ function AddBP({ accessToken, setIsAddBP }) {
   };
   return (
     <div className="p-4 rounded-xl fixed inset-0 bg-gray backdrop-blur-sm flex flex-col items-center justify-center gap-10">
-      <form onSubmit={addBP}>
+      <form onSubmit={addSugar}>
         <div>
           <label
-            htmlFor="systolic"
+            htmlFor="fasting"
             className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl text-white"
           >
-            Systolic
+            Fasting:
           </label>
           <input
             type="number"
-            name="systolic"
-            id="systolic"
+            name="fasting"
+            id="fasting"
             className="bg-[#242424] outline-none p-1 rounded text-xl text-white"
-            onChange={(e) => setSystolic(e.target.value)}
+            onChange={(e) => setFasting(e.target.value)}
             required
           />
         </div>
         <div>
           <label
-            htmlFor="diastolic"
+            htmlFor="random"
             className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl text-white"
           >
-            Diastolic
+            Random:
           </label>
           <input
             type="number"
-            name="diastolic"
-            id="diastolic"
+            name="random"
+            id="random"
             className="bg-[#242424] outline-none p-1 rounded text-xl text-white"
-            onChange={(e) => setDiastolic(e.target.value)}
+            onChange={(e) => setRandom(e.target.value)}
             required
           />
-        </div>
-        <div>
-          <label htmlFor="timing" className="text-white">
-            Timing
-          </label>
-          <select
-            name="timing"
-            id="timing"
-            onChange={(e) => setTiming(e.target.value)}
-            value={timing}
-            className="text-white"
-          >
-            <option value="morning">morning</option>
-            <option value="afternoon">afternoon</option>
-            <option value="evening">evening</option>
-          </select>
         </div>
         <button type="submit" className="cursor-pointer text-white">
           Add
@@ -92,8 +74,10 @@ function AddBP({ accessToken, setIsAddBP }) {
       </form>
       <button
         type="button"
+        onClick={() => {
+          navigate("/dashboard");
+        }}
         className="cursor-pointer text-white"
-        onClick={() => navigate("/dashboard")}
       >
         Cancel
       </button>
@@ -101,4 +85,4 @@ function AddBP({ accessToken, setIsAddBP }) {
   );
 }
 
-export default AddBP;
+export default AddSugar;

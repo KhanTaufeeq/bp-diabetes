@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { jwtDecode } from "jwt-decode";
 import AddBP from "./AddBP";
+import AddSugar from "./AddSugar";
+import BP from "./Bp";
 
 export default function Dashboard() {
   const [sugar, setSugar] = useState([]);
   const [bp, setBP] = useState([]);
-  const [fasting, setFasting] = useState(0);
-  const [random, setRandom] = useState(0);
   const [isAddSugar, setIsAddSugar] = useState(false);
   const [isAddBP, setIsAddBP] = useState(false);
   const [accessToken, setAccessToken] = useState("");
@@ -88,33 +88,6 @@ export default function Dashboard() {
     navigate("/signin");
   };
 
-  const addSugar = (e) => {
-    e.preventDefault();
-    axios
-      .post(
-        "http://localhost:5000/api/sugar/add",
-        {
-          fasting: parseInt(fasting),
-          random: parseInt(random),
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        navigate("/dashboard");
-        setIsAddSugar(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log(accessToken);
-      });
-  };
-
   const toggleAddSugar = () => {
     if (isAddSugar == true) {
       setIsAddSugar(false);
@@ -184,45 +157,7 @@ export default function Dashboard() {
             </button>
           </div>
           {isAddSugar && (
-            <div className="bg-black p-4 rounded-xl">
-              <form onSubmit={addSugar}>
-                <div>
-                  <label
-                    htmlFor="fasting"
-                    className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl text-white"
-                  >
-                    Fasting:
-                  </label>
-                  <input
-                    type="number"
-                    name="fasting"
-                    id="fasting"
-                    className="bg-[#242424] outline-none p-1 rounded text-xl text-white"
-                    onChange={(e) => setFasting(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="random"
-                    className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl text-white"
-                  >
-                    Random:
-                  </label>
-                  <input
-                    type="number"
-                    name="random"
-                    id="random"
-                    className="bg-[#242424] outline-none p-1 rounded text-xl text-white"
-                    onChange={(e) => setRandom(e.target.value)}
-                    required
-                  />
-                </div>
-                <button type="submit" className="cursor-pointer text-white">
-                  Add
-                </button>
-              </form>
-            </div>
+            <AddSugar accessToken={accessToken} setIsAddSugar={setIsAddSugar}/>
           )}
           <div className="text-center mt-5">
             {sugar[0] && (
