@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import { jwtDecode } from "jwt-decode";
 import AddBP from "./AddBP";
 import AddSugar from "./AddSugar";
@@ -9,12 +10,14 @@ import BP from "./Bp";
 
 export default function Dashboard() {
   const [sugar, setSugar] = useState([]);
-  const [bp, setBP] = useState([]);
+  const location = useLocation();
   const [isAddSugar, setIsAddSugar] = useState(false);
   const [isAddBP, setIsAddBP] = useState(false);
   const [accessToken, setAccessToken] = useState("");
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
+
+  const isDashBoard = location.pathname === '/dashboard';
 
   useEffect(() => {
     console.log("first useEffect");
@@ -64,25 +67,6 @@ export default function Dashboard() {
     }
   }, [accessToken]);
 
-  useEffect(() => {
-    console.log("third useEffect");
-    if (accessToken) {
-      axios
-        .get("http://localhost:5000/api/bp", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-        .then((res) => {
-          console.log(res.data.bp);
-          setBP(res.data.bp);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  }, [accessToken]);
-
   const logout = () => {
     localStorage.removeItem("accessToken");
     navigate("/signin");
@@ -124,22 +108,9 @@ export default function Dashboard() {
           {isAddBP && (
             <AddBP accessToken={accessToken} setIsAddBP={setIsAddBP} />
           )}
-          <div className="text-center mt-5">
-            {bp[0] && (
-              <p className="text-white text-2xl">Systolic: {bp[0].systolic}</p>
-            )}
-            {bp[0] && (
-              <p className="text-white text-2xl mt-2 mb-2">
-                Diastolic: {bp[0].diastolic}
-              </p>
-            )}
-            {bp[0] && (
-              <p className="text-white text-2xl mb-2">when: {bp[0].timing}</p>
-            )}
-            {bp[0] && (
-              <p className="text-white">Date & Time: {bp[0].createdAt}</p>
-            )}
-          </div>
+            <div className="text-center mt-5">
+            <BP accessToken={accessToken} isDashBoard={isDashBoard}/>
+            </div>
         </div>
         <div className="bg-black p-8 rounded-xl">
           <div className="flex justify-between">
@@ -157,7 +128,7 @@ export default function Dashboard() {
             </button>
           </div>
           {isAddSugar && (
-            <AddSugar accessToken={accessToken} setIsAddSugar={setIsAddSugar}/>
+            <AddSugar accessToken={accessToken} setIsAddSugar={setIsAddSugar} />
           )}
           <div className="text-center mt-5">
             {sugar[0] && (
