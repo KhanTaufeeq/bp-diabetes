@@ -1,41 +1,14 @@
 import React from "react";
-import { useState } from "react";
 import { useNavigate } from "react-router";
-import axios from "axios";
+import { useHealthData } from "./HealthDataContext";
 
-function AddSugar({ accessToken, setIsAddSugar }) {
-  const [fasting, setFasting] = useState(0);
-  const [random, setRandom] = useState(0);
+function AddSugar() {
+  const { setFasting, setRandom, addSugarRecord } = useHealthData();
   const navigate = useNavigate();
 
-  const addSugar = (e) => {
-    e.preventDefault();
-    axios
-      .post(
-        "http://localhost:5000/api/sugar/add",
-        {
-          fasting: parseInt(fasting),
-          random: parseInt(random),
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        navigate("/dashboard");
-        setIsAddSugar(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   return (
     <div className="p-4 rounded-xl fixed inset-0 bg-gray backdrop-blur-sm flex flex-col items-center justify-center gap-10">
-      <form onSubmit={addSugar}>
+      <form onSubmit={addSugarRecord}>
         <div>
           <label
             htmlFor="fasting"

@@ -1,68 +1,34 @@
-import axios from "axios";
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import React, { useEffect } from "react";
+import { useHealthData } from "./HealthDataContext.jsx";
 import editImage from "./assets/images/edit.svg";
 import deleteImage from "./assets/images/delete.svg";
 
-function BP({ accessToken, isDashBoard}) {
-  const [bp, setBp] = useState([]);
+function BP({ isDashBoard }) {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+
+  const { loading, error, bpData, getLatestBp, fetchBpData } = useHealthData();
 
   useEffect(() => {
-    console.log(accessToken);
-    if (!accessToken) {
-      return;
-    }
-    setLoading(true);
-    axios
-      .get("http://localhost:5000/api/bp", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then((res) => {
-        console.log('checking bp data...')
-        console.log(res.data.bp);
-        setBp(res.data.bp);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setError("Failed to load blood pressure data");
-        setLoading(false);
-      });
-  }, [accessToken,isDashBoard]);
+    fetchBpData();
+  },[])
 
-  const deleteBP = () => {
-    axios
-      .delete("http://localhost:5000/api/bp/delete", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  // for DashBoard view
+  const latestBp = getLatestBp();
 
-  if (loading) {
+  if (loading.bp) {
     return <p className="text-white">Loading BP data...</p>;
   }
 
-  if (error) {
-    return <p>{error}</p>;
+  if (error.bp) {
+    return <p>{error.bp}</p>;
   }
 
-  if (bp.length === 0) {
-    console.log('BP array: ', bp);
-    return <p className="text-white">No Blood Pressure data records found :(</p>;
+  if (bpData.length === 0) {
+    console.log("BP array: ", bpData);
+    return (
+      <p className="text-white">No Blood Pressure data records found :(</p>
+    );
   }
 
   return (
@@ -72,20 +38,26 @@ function BP({ accessToken, isDashBoard}) {
           className="cursor-pointer text-white mb-5 bg-black p-1 w-30 rounded-xl"
           onClick={() => navigate("/dashboard")}
         >
-          My Dashboard 
+          My Dashboard
           {console.log(isDashBoard)}
         </button>
       )}
       <div>
         {isDashBoard
-          ? bp[0] && (
+          ? // DashBoard view - only latest BP
+            latestBp && (
               <>
-                <p className="text-white text-2xl">Systolic: {bp[0].systolic}</p>
-                <p className="text-white text-2xl">Diastolic: {bp[0].diastolic}</p>
-                <p className="text-white">Date & Time: {bp[0].createdAt}</p>
+                <p className="text-white text-2xl">
+                  Systolic: {latestBp.systolic}
+                </p>
+                <p className="text-white text-2xl">
+                  Diastolic: {latestBp.diastolic}
+                </p>
+                <p className="text-white">Date & Time: {latestBp.createdAt}</p>
               </>
             )
-          : bp.map((data) => {
+          : // full BP page view, shows all records
+            bpData.map((data) => {
               return (
                 <div
                   key={data._id}

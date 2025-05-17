@@ -1,43 +1,15 @@
 import React from "react";
-import { useState } from "react";
 import { useNavigate } from "react-router";
-import axios from "axios";
+import { useHealthData } from "./HealthDataContext";
 
-function AddBP({ accessToken, setIsAddBP }) {
-  const [systolic, setSystolic] = useState(0);
-  const [diastolic, setDiastolic] = useState(0);
-  const [timing, setTiming] = useState("morning");
+function AddBP() {
   const navigate = useNavigate();
 
-  const addBP = (e) => {
-    e.preventDefault();
-    axios
-      .post(
-        "http://localhost:5000/api/bp/add",
-        {
-          systolic: parseInt(systolic),
-          diastolic: parseInt(diastolic),
-          timing: timing,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        navigate("/dashboard");
-        setIsAddBP(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const { setSystolic, setDiastolic, setTiming, addBpRecord } = useHealthData();
+
   return (
     <div className="p-4 rounded-xl fixed inset-0 bg-gray backdrop-blur-sm flex flex-col items-center justify-center gap-10">
-      <form onSubmit={addBP}>
+      <form onSubmit={addBpRecord}>
         <div>
           <label
             htmlFor="systolic"

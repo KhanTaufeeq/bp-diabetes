@@ -7,15 +7,16 @@ import { jwtDecode } from "jwt-decode";
 import AddBP from "./AddBP";
 import AddSugar from "./AddSugar";
 import BP from "./Bp";
+import { useHealthData } from "./HealthDataContext";
 
 export default function Dashboard() {
   const [sugar, setSugar] = useState([]);
   const location = useLocation();
-  const [isAddSugar, setIsAddSugar] = useState(false);
-  const [isAddBP, setIsAddBP] = useState(false);
   const [accessToken, setAccessToken] = useState("");
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
+  const [isAddSugar, setIsAddSugar] = useState(false);
+  const [isAddBP, setIsAddBP] = useState(false);
 
   const isDashBoard = location.pathname === '/dashboard';
 
