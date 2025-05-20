@@ -5,7 +5,7 @@ import { useHealthData } from "./HealthDataContext";
 function AddBP() {
   const navigate = useNavigate();
 
-  const { setSystolic, setDiastolic, setTiming, addBpRecord } = useHealthData();
+  const { setSystolic, setDiastolic, setTiming, addBpRecord, timing } = useHealthData();
 
   return (
     <div className="p-4 rounded-xl fixed inset-0 bg-gray backdrop-blur-sm flex flex-col items-center justify-center gap-10">

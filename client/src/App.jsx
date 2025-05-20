@@ -35,7 +35,7 @@ function App() {
               path="/sugar"
               element={
                 <ProtectedRoute>
-                  <Sugar />
+                  <Sugar isDashBoard={false}/>
                 </ProtectedRoute>
               }
             />
@@ -43,7 +43,7 @@ function App() {
               path="/bp"
               element={
                 <ProtectedRoute>
-                  <BP />
+                  <BP isDashBoard={false}/>
                 </ProtectedRoute>
               }
             />

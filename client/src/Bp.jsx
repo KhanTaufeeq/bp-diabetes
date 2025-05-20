@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import React, { useEffect } from "react";
+import React from "react";
 import { useHealthData } from "./HealthDataContext.jsx";
 import editImage from "./assets/images/edit.svg";
 import deleteImage from "./assets/images/delete.svg";
@@ -7,11 +7,7 @@ import deleteImage from "./assets/images/delete.svg";
 function BP({ isDashBoard }) {
   const navigate = useNavigate();
 
-  const { loading, error, bpData, getLatestBp, fetchBpData } = useHealthData();
-
-  useEffect(() => {
-    fetchBpData();
-  },[])
+  const { loading, error, bpData, getLatestBp, deleteBPRecord} = useHealthData();
 
   // for DashBoard view
   const latestBp = getLatestBp();
@@ -21,7 +17,7 @@ function BP({ isDashBoard }) {
   }
 
   if (error.bp) {
-    return <p>{error.bp}</p>;
+    return <p className="text-white">{error.bp}</p>;
   }
 
   if (bpData.length === 0) {
@@ -65,6 +61,7 @@ function BP({ isDashBoard }) {
                 >
                   <p className="text-white">Systolic: {data.systolic}</p>
                   <p className="text-white">Diastolic: {data.diastolic}</p>
+                  <p className="text-white">Timing: {data.timing}</p>
                   <p className="text-white">Date & Time: {data.createdAt}</p>
                   <img
                     src={editImage}
@@ -75,7 +72,7 @@ function BP({ isDashBoard }) {
                     src={deleteImage}
                     alt="delete"
                     className="absolute top-2 right-9 w-[20px] cursor-pointer"
-                    onClick={deleteBP}
+                    onClick={() => deleteBPRecord(data._id)}
                   />
                 </div>
               );

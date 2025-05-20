@@ -1,11 +1,14 @@
-import { addSugar, getSugar } from "../controller/sugarController.js";
+import { addSugar, getSugar,deleteSugar } from "../controller/sugarController.js";
 import { authMiddleware } from "../middlewares/authenticateMiddleware.js";
 import express from 'express';
 
 export const sugarRoutes = express.Router();
 
-// user register route
+// add sugar route
 sugarRoutes.post('/add', authMiddleware,addSugar);
 
-// user login route 
+// get sugar route 
 sugarRoutes.get('/', authMiddleware, getSugar);
+
+// delete sugar route
+sugarRoutes.delete('/delete/:id', authMiddleware, deleteSugar);

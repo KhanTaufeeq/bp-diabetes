@@ -12,8 +12,8 @@ export const useHealthData = () => useContext(HealthDataContext);
 // provider component
 
 export const HealthDataProvider = ({ children }) => {
-  const [bpData, setBPData] = useState();
-  const [sugarData, setSugarData] = useState();
+  const [bpData, setBPData] = useState([]);
+  const [sugarData, setSugarData] = useState([]);
   const [loading, setLoading] = useState({ bp: false, sugar: false });
   const [error, setError] = useState({ bp: null, sugar: null });
   const [systolic, setSystolic] = useState(0);
@@ -117,8 +117,8 @@ export const HealthDataProvider = ({ children }) => {
       const response = await axios.post(
         "http://localhost:5000/api/bp/add",
         {
-          systolic: systolic,
-          diastolic: diastolic,
+          systolic: parseInt(systolic),
+          diastolic: parseInt(diastolic),
           timing: timing,
         },
         {
@@ -150,8 +150,8 @@ export const HealthDataProvider = ({ children }) => {
       const response = await axios.post(
         "http://localhost:5000/api/sugar/add",
         {
-          fasting: fasting,
-          random: random,
+          fasting: parseInt(fasting),
+          random: parseInt(random),
         },
         {
           headers: {
@@ -172,6 +172,87 @@ export const HealthDataProvider = ({ children }) => {
     }
   };
 
+  const deleteBPRecord = async (id) => {
+    if (!accessToken) {
+      setError((prev) => ({ ...prev, bp: "Authentication required!" }));
+      return;
+    }
+
+    try {
+      setLoading((prev) => ({ ...prev, bp: true }));
+      const response = await axios.delete(
+        `http://localhost:5000/api/bp/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+      setBPData(bpData.filter((bp) => bp._id !== id));
+      setError((prev) => ({ ...prev, bp: null }));
+    } catch (error) {
+      console.error(error);
+      setError((prev) => ({ ...prev, bp: "Failed to delete this bp record" }));
+    } finally {
+      setLoading((prev) => ({ ...prev, bp: false }));
+    }
+  };
+
+  const deleteSugarRecord = async (id) => {
+    if (!accessToken) {
+      setError((prev) => ({ ...prev, sugar: "Authentication required!" }));
+      return;
+    }
+
+    try {
+      setLoading((prev) => ({ ...prev, sugar: true }));
+      const response = await axios.delete(
+        `http://localhost:5000/api/sugar/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+      setSugarData(sugarData.filter((sugar) => sugar._id !== id));
+      setError((prev) => ({ ...prev, sugar: null }));
+    } catch (error) {
+      console.error(error);
+      setError((prev) => ({ ...prev, sugar: "Failed to delete this bp record" }));
+    } finally {
+      setLoading((prev) => ({ ...prev, sugar: false }));
+    }
+  };
+
+  const editBPRecord = async (id) => {
+    if (!accessToken) {
+      setError((prev) => ({ ...prev, sugar: "Authentication required!" }));
+      return;
+    }
+    try {
+      setLoading((prev) => ({ ...prev, bp: true }));
+      const response = await axios.put(`http://localhost:5000/api/bp/edit/${id}`, {
+        'systolic': systolic,
+        'diastolic': diastolic,
+        'timing':timing
+      },{
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      console.log(response.data);
+      fetchBpData();
+      setError((prev) => ({ ...prev, bp: null }));
+    } catch (error) {
+      console.error(error);
+      setError((prev) => ({ ...prev, bp: "Failed to update this bp record" }));
+    } finally {
+      setLoading((prev) => ({ ...prev, bp: false }));
+    }
+  }
+
   // Fetch data when token changes or component mounts
   useEffect(() => {
     if (accessToken) {
@@ -190,8 +271,6 @@ export const HealthDataProvider = ({ children }) => {
     timing,
     fasting,
     random,
-    isAddBP,
-    isAddSugar,
 
     // state
     loading,
@@ -202,13 +281,14 @@ export const HealthDataProvider = ({ children }) => {
     fetchSugarData,
     addBpRecord,
     addSugarRecord,
+    deleteBPRecord,
+    deleteSugarRecord,
+    editBPRecord,
     setSystolic,
     setDiastolic,
     setTiming,
     setFasting,
     setRandom,
-    setIsAddBP,
-    setIsAddSugar,
 
     // authentication
     accessToken,

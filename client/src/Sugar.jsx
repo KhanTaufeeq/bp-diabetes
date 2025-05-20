@@ -2,15 +2,10 @@ import { useNavigate } from "react-router";
 import editImage from './assets/images/edit.svg';
 import deleteImage from './assets/images/delete.svg';
 import { useHealthData } from "./HealthDataContext.jsx";
-import { useEffect } from "react";
 
 function Sugar({isDashBoard}) {
   const navigate = useNavigate();
-  const { sugarData, getLatestSugar, fetchSugarData } = useHealthData();
-
-  useEffect(() => {
-    fetchSugarData()
-  },[])
+  const { sugarData, getLatestSugar, loading, error,deleteSugarRecord } = useHealthData();
 
     // for DashBoard view
     const latestSugar = getLatestSugar();
@@ -20,7 +15,7 @@ function Sugar({isDashBoard}) {
     }
   
     if (error.sugar) {
-      return <p>{error.sugar}</p>;
+      return <p className="text-white">{error.sugar}</p>;
     }
   
     if (sugarData.length === 0) {
@@ -75,7 +70,7 @@ function Sugar({isDashBoard}) {
                         src={deleteImage}
                         alt="delete"
                         className="absolute top-2 right-9 w-[20px] cursor-pointer"
-                        onClick={deleteBP}
+                        onClick={() => deleteSugarRecord(data._id)}
                       />
                     </div>
                   );

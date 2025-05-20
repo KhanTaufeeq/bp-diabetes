@@ -10,6 +10,6 @@ bpRoutes.post('/add', authMiddleware, addBP);
 
 bpRoutes.get('/', authMiddleware, getBP);
 
-bpRoutes.put('/edit', authMiddleware, editBP);
+bpRoutes.put('/edit/:id', authMiddleware, editBP);
 
-bpRoutes.delete('/delete', authMiddleware, deleteBP);
+bpRoutes.delete('/delete/:id', authMiddleware, deleteBP);

@@ -56,3 +56,28 @@ export const getSugar = async (req, res) => {
       .json({ message: "There is something wrong", error: error.message });
   }
 };
+
+
+export const deleteSugar = async (req, res) => {
+  const { id } = req.params;
+  try {
+    if (!req.userId) {
+      return res.status(404).json({error: 'User is not authorized'})
+    }
+    if (!id) {
+      return res.status(404).json({ error: 'sugar data is not found' });
+    }
+    const sugarRecord = await Sugar.findOne({ _id: id, user: req.userId });
+    console.log('sugar record',sugarRecord);
+    if (!sugarRecord) {
+      return res.status(404).json({ error: 'sugar data is not found' });
+    }
+    else {
+      await Sugar.findByIdAndDelete(id);
+      return res.status(200).json({ message: "sugar data has been deleted successfully" });
+    }
+  } catch (error) {
+    console.error("Error deleting sugar record", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}

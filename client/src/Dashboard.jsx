@@ -1,72 +1,17 @@
 import React from "react";
-import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import { useNavigate } from "react-router";
-import { useLocation } from "react-router";
-import { jwtDecode } from "jwt-decode";
 import AddBP from "./AddBP";
 import AddSugar from "./AddSugar";
 import BP from "./Bp";
-import { useHealthData } from "./HealthDataContext";
+import Sugar from "./Sugar";
 
 export default function Dashboard() {
-  const [sugar, setSugar] = useState([]);
-  const location = useLocation();
-  const [accessToken, setAccessToken] = useState("");
-  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
   const [isAddSugar, setIsAddSugar] = useState(false);
   const [isAddBP, setIsAddBP] = useState(false);
 
-  const isDashBoard = location.pathname === '/dashboard';
-
-  useEffect(() => {
-    console.log("first useEffect");
-    const token = localStorage.getItem("accessToken");
-    const name = localStorage.getItem("userName");
-    setUserName(name);
-    console.log(token);
-    if (!token) {
-      navigate("/signin");
-      return;
-    }
-
-    try {
-      const decoded = jwtDecode(token);
-      console.log(decoded);
-      const currentTime = Date.now() / 1000;
-      if (decoded.exp < currentTime) {
-        localStorage.removeItem("accessToken");
-        navigate("/signin");
-      } else {
-        setAccessToken(token);
-      }
-    } catch (error) {
-      // invalid token format
-      localStorage.removeItem("accessToken");
-      navigate("/signin");
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    console.log("second useEffect");
-    if (accessToken) {
-      axios
-        .get("http://localhost:5000/api/sugar", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-        .then((res) => {
-          console.log(res.data.sugar);
-          setSugar(res.data.sugar);
-        })
-        .catch((error) => {
-          console.log(error);
-          console.log(accessToken);
-        });
-    }
-  }, [accessToken]);
+  const userName = localStorage.getItem('userName');
 
   const logout = () => {
     localStorage.removeItem("accessToken");
@@ -107,10 +52,10 @@ export default function Dashboard() {
             </button>
           </div>
           {isAddBP && (
-            <AddBP accessToken={accessToken} setIsAddBP={setIsAddBP} />
+            <AddBP />
           )}
             <div className="text-center mt-5">
-            <BP accessToken={accessToken} isDashBoard={isDashBoard}/>
+            <BP isDashBoard={true}/>
             </div>
         </div>
         <div className="bg-black p-8 rounded-xl">
@@ -129,20 +74,10 @@ export default function Dashboard() {
             </button>
           </div>
           {isAddSugar && (
-            <AddSugar accessToken={accessToken} setIsAddSugar={setIsAddSugar} />
+            <AddSugar/>
           )}
           <div className="text-center mt-5">
-            {sugar[0] && (
-              <p className="text-white text-2xl">Fasting: {sugar[0].fasting}</p>
-            )}
-            {sugar[0] && (
-              <p className="text-white text-2xl mt-2 mb-2">
-                Random: {sugar[0].random}
-              </p>
-            )}
-            {sugar[0] && (
-              <p className="text-white">Date & Time: {sugar[0].createdAt}</p>
-            )}
+            <Sugar isDashBoard={true}/>
           </div>
         </div>
       </div>
