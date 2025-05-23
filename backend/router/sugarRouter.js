@@ -1,4 +1,4 @@
-import { addSugar, getSugar,deleteSugar } from "../controller/sugarController.js";
+import { addSugar, getSugar,deleteSugar,editSugar } from "../controller/sugarController.js";
 import { authMiddleware } from "../middlewares/authenticateMiddleware.js";
 import express from 'express';
 
@@ -12,3 +12,7 @@ sugarRoutes.get('/', authMiddleware, getSugar);
 
 // delete sugar route
 sugarRoutes.delete('/delete/:id', authMiddleware, deleteSugar);
+
+
+// edit sugar route
+sugarRoutes.put('/edit/:id', authMiddleware, editSugar);

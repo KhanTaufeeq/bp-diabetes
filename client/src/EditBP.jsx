@@ -1,6 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router";
 import { useHealthData } from "./HealthDataContext";
+import { useNavigate } from "react-router";
 
 function EditBP() {
   const {
@@ -12,9 +12,31 @@ function EditBP() {
     editingRecord,
   } = useHealthData();
 
+  const navigate = useNavigate();
+
+  if (loading.bp) {
+    return <p className="text-white">Loading BP data...</p>;
+  }
+
+  if (error.bp) {
+    return <p className="text-white">{error.bp}</p>;
+  }
+
+  if (!editingRecord) {
+    return (
+      <div className="text-white">
+        <p>No record selected for editing</p>
+        <button onClick={() => navigate('/bp')} className="cursor-pointer">Go Back</button>
+      </div>
+    )
+  }
+
   return (
     <div className="p-4 rounded-xl fixed flex flex-col items-center justify-center gap-10">
-      <form onSubmit={() => editBPRecord(editingRecord._id)}>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        editBPRecord(editingRecord._id);
+      }}>
         <div>
           <label
             htmlFor="systolic"
@@ -28,7 +50,7 @@ function EditBP() {
             id="systolic"
             className="bg-[#242424] outline-none p-1 rounded text-xl text-white"
             onChange={(e) => handleEditFormChange(e)}
-            value={editingRecord.systolic}
+            value={editingRecord?.systolic || ''}
             required
           />
         </div>
@@ -45,7 +67,7 @@ function EditBP() {
             id="diastolic"
             className="bg-[#242424] outline-none p-1 rounded text-xl text-white"
             onChange={(e) => handleEditFormChange(e)}
-            value={editingRecord.diastolic}
+            value={editingRecord?.diastolic || ''}
             required
           />
         </div>
@@ -57,7 +79,7 @@ function EditBP() {
             name="timing"
             id="timing"
             onChange={(e) => handleEditFormChange(e)}
-            value={editingRecord.timing}
+            value={editingRecord?.timing || ''}
             className="text-white"
           >
             <option value="morning">morning</option>

@@ -23,7 +23,8 @@ export const HealthDataProvider = ({ children }) => {
   const [timing, setTiming] = useState("morning");
   const [fasting, setFasting] = useState(0);
   const [random, setRandom] = useState(0);
-  const [editingRecord, setEditingRecord] = useState(null);
+  const [editingRecord, setEditingRecord] = useState({ systolic: '', diastolic: '', timing: 'morning' });
+  const [editingSugarRecord, setEditingSugarRecord] = useState({ fasting: '', random: '' });
 
   // authentication token
 
@@ -235,14 +236,42 @@ export const HealthDataProvider = ({ children }) => {
   // when the user clicks 'edit' on the record
   const handleEditClick = (record) => {
     console.log(record);
-    setEditingRecord({ ...record });
-    navigate("/editbp");
+    setEditingRecord({
+      systolic: record.systolic || '',
+      diastolic: record.diastolic || '',
+      timing: record.timing || 'morning',
+      _id: record._id
+    });
+    navigate("/editBp");
   };
+
+  const handleSugarEditClick = (record) => {
+    console.log(record);
+    setEditingSugarRecord({
+      fasting: record.fasting || '',
+      random: record.random || '',
+      _id: record._id
+    });
+    navigate("/editSugar");
+  }; 
 
   // when the user changes the values in edit form
   const handleEditFormChange = (e) => {
     const { name, value } = e.target;
+    if (!editingRecord) {
+      console.warn('No editing record available');
+      return;
+    }
     setEditingRecord({ ...editingRecord, [name]: value });
+  };
+
+  const handleSugarEditFormChange = (e) => {
+    const { name, value } = e.target;
+    if (!editingSugarRecord) {
+      console.warn('No editing record available');
+      return;
+    }
+    setEditingSugarRecord({ ...editingSugarRecord, [name]: value });
   };
 
   const editBPRecord = async (id) => {
@@ -269,8 +298,8 @@ export const HealthDataProvider = ({ children }) => {
       const response = await axios.put(
         `http://localhost:5000/api/bp/edit/${id}`,
         {
-          systolic: editingRecord.systolic,
-          diastolic: editingRecord.diastolic,
+          systolic: parseInt(editingRecord.systolic),
+          diastolic: parseInt(editingRecord.diastolic),
           timing: editingRecord.timing,
         },
         {
@@ -304,10 +333,73 @@ export const HealthDataProvider = ({ children }) => {
     }
   };
 
+  const editSugarRecord = async (id) => {
+    if (!accessToken) {
+      setError((prev) => ({ ...prev, sugar: "Authentication required!" }));
+      return;
+    }
+    if (!editingSugarRecord) {
+      setError((prev) => ({
+        ...prev,
+        sugar: "No editing record has been selected",
+      }));
+      return;
+    }
+    if (!editingSugarRecord.fasting || !editingSugarRecord.random) {
+      setError((prev) => ({
+        ...prev,
+        sugar: "Fasting and Random values are required",
+      }));
+      return;
+    }
+    setLoading((prev) => ({ ...prev, sugar: true }));
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/sugar/edit/${id}`,
+        {
+          fasting: parseInt(editingSugarRecord.fasting),
+          random: parseInt(editingSugarRecord.random),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+      fetchSugarData();
+      setError((prev) => ({ ...prev, sugar: null }));
+      navigate("/sugar");
+    } catch (error) {
+      if (error.response?.status == 401) {
+        setError((prev) => ({
+          ...prev,
+          sugar: "Session expired. Please login again.",
+        }));
+      } else if (error.response?.status == 404) {
+        setError((prev) => ({ ...prev, bp: "Record not found" }));
+      } else {
+        setError((prev) => ({
+          ...prev,
+          bp:
+            error.response?.data?.message || "Failed to update this sugar record",
+        }));
+      }
+    } finally {
+      setLoading((prev) => ({ ...prev, sugar: false }));
+      setEditingSugarRecord(null);
+    }
+  };
+
   // cancel edit
   const handleCancelEdit = () => {
     setEditingRecord(null);
     navigate("/bp");
+  };
+
+  const handleSugarCancelEdit = () => {
+    setEditingSugarRecord(null);
+    navigate("/sugar");
   };
 
   // Fetch data when token changes or component mounts
@@ -329,6 +421,7 @@ export const HealthDataProvider = ({ children }) => {
     fasting,
     random,
     editingRecord,
+    editingSugarRecord,
 
     // state
     loading,
@@ -345,6 +438,10 @@ export const HealthDataProvider = ({ children }) => {
     handleEditClick,
     handleEditFormChange,
     handleCancelEdit,
+    handleSugarEditClick,
+    handleSugarEditFormChange,
+    handleSugarCancelEdit,
+    editSugarRecord,
     setSystolic,
     setDiastolic,
     setTiming,

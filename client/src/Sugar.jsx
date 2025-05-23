@@ -5,7 +5,7 @@ import { useHealthData } from "./HealthDataContext.jsx";
 
 function Sugar({isDashBoard}) {
   const navigate = useNavigate();
-  const { sugarData, getLatestSugar, loading, error,deleteSugarRecord } = useHealthData();
+  const { sugarData, getLatestSugar, loading, error,deleteSugarRecord, handleSugarEditClick } = useHealthData();
 
     // for DashBoard view
     const latestSugar = getLatestSugar();
@@ -65,6 +65,7 @@ function Sugar({isDashBoard}) {
                         src={editImage}
                         alt="menu"
                         className="absolute top-2 right-2 w-[20px] cursor-pointer"
+                        onClick={() => handleSugarEditClick(data)}
                       />
                       <img
                         src={deleteImage}

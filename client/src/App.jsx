@@ -6,6 +6,7 @@ import Signin from "./Signin";
 import Sugar from "./Sugar";
 import BP from "./Bp";
 import EditBP from "./EditBP";
+import EditSugar from "./EditSugar";
 import { HealthDataProvider } from "./HealthDataContext";
 import {jwtDecode} from 'jwt-decode';
 
@@ -64,6 +65,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <EditBP/>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editSugar"
+              element={
+                <ProtectedRoute>
+                  <EditSugar/>
                 </ProtectedRoute>
               }
             />
