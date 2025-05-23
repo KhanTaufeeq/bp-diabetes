@@ -3,11 +3,12 @@ import React from "react";
 import { useHealthData } from "./HealthDataContext.jsx";
 import editImage from "./assets/images/edit.svg";
 import deleteImage from "./assets/images/delete.svg";
+import EditBP from "./EditBP.jsx";
 
 function BP({ isDashBoard }) {
   const navigate = useNavigate();
 
-  const { loading, error, bpData, getLatestBp, deleteBPRecord} = useHealthData();
+  const { loading, error, bpData, getLatestBp, handleEditClick, deleteBPRecord} = useHealthData();
 
   // for DashBoard view
   const latestBp = getLatestBp();
@@ -67,6 +68,7 @@ function BP({ isDashBoard }) {
                     src={editImage}
                     alt="menu"
                     className="absolute top-2 right-2 w-[20px] cursor-pointer"
+                    onClick={() => handleEditClick(data)}
                   />
                   <img
                     src={deleteImage}

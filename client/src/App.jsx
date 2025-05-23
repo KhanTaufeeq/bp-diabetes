@@ -5,12 +5,24 @@ import Register from "./Register";
 import Signin from "./Signin";
 import Sugar from "./Sugar";
 import BP from "./Bp";
+import EditBP from "./EditBP";
 import { HealthDataProvider } from "./HealthDataContext";
+import {jwtDecode} from 'jwt-decode';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
   if (!token) {
     return <Navigate to="/signin" />;
+  }
+  try {
+    const decodedToken = jwtDecode(token);
+    if (decodedToken.exp < Date.now() / 1000) {
+      localStorage.removeItem('accessToken');
+      return <Navigate to='/signin' replace/>
+    }
+  } catch (error) {
+    console.log(error);
+    return <Navigate to='/signin' replace/>
   }
   return children;
 };
@@ -44,6 +56,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <BP isDashBoard={false}/>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editBp"
+              element={
+                <ProtectedRoute>
+                  <EditBP/>
                 </ProtectedRoute>
               }
             />

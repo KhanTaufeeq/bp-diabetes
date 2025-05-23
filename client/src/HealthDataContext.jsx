@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect, createContext } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 // create a context for health data
 
@@ -12,6 +13,7 @@ export const useHealthData = () => useContext(HealthDataContext);
 // provider component
 
 export const HealthDataProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [bpData, setBPData] = useState([]);
   const [sugarData, setSugarData] = useState([]);
   const [loading, setLoading] = useState({ bp: false, sugar: false });
@@ -21,6 +23,7 @@ export const HealthDataProvider = ({ children }) => {
   const [timing, setTiming] = useState("morning");
   const [fasting, setFasting] = useState(0);
   const [random, setRandom] = useState(0);
+  const [editingRecord, setEditingRecord] = useState(null);
 
   // authentication token
 
@@ -220,38 +223,92 @@ export const HealthDataProvider = ({ children }) => {
       setError((prev) => ({ ...prev, sugar: null }));
     } catch (error) {
       console.error(error);
-      setError((prev) => ({ ...prev, sugar: "Failed to delete this bp record" }));
+      setError((prev) => ({
+        ...prev,
+        sugar: "Failed to delete this bp record",
+      }));
     } finally {
       setLoading((prev) => ({ ...prev, sugar: false }));
     }
   };
 
+  // when the user clicks 'edit' on the record
+  const handleEditClick = (record) => {
+    console.log(record);
+    setEditingRecord({ ...record });
+    navigate("/editbp");
+  };
+
+  // when the user changes the values in edit form
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditingRecord({ ...editingRecord, [name]: value });
+  };
+
   const editBPRecord = async (id) => {
     if (!accessToken) {
-      setError((prev) => ({ ...prev, sugar: "Authentication required!" }));
+      setError((prev) => ({ ...prev, bp: "Authentication required!" }));
       return;
     }
+    if (!editingRecord) {
+      setError((prev) => ({
+        ...prev,
+        bp: "No editing record has been selected",
+      }));
+      return;
+    }
+    if (!editingRecord.systolic || !editingRecord.diastolic) {
+      setError((prev) => ({
+        ...prev,
+        bp: "Systolic and Diastolic values are required",
+      }));
+      return;
+    }
+    setLoading((prev) => ({ ...prev, bp: true }));
     try {
-      setLoading((prev) => ({ ...prev, bp: true }));
-      const response = await axios.put(`http://localhost:5000/api/bp/edit/${id}`, {
-        'systolic': systolic,
-        'diastolic': diastolic,
-        'timing':timing
-      },{
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      const response = await axios.put(
+        `http://localhost:5000/api/bp/edit/${id}`,
+        {
+          systolic: editingRecord.systolic,
+          diastolic: editingRecord.diastolic,
+          timing: editingRecord.timing,
         },
-      })
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       console.log(response.data);
       fetchBpData();
       setError((prev) => ({ ...prev, bp: null }));
+      navigate("/bp");
     } catch (error) {
-      console.error(error);
-      setError((prev) => ({ ...prev, bp: "Failed to update this bp record" }));
+      if (error.response?.status == 401) {
+        setError((prev) => ({
+          ...prev,
+          bp: "Session expired. Please login again.",
+        }));
+      } else if (error.response?.status == 404) {
+        setError((prev) => ({ ...prev, bp: "Record not found" }));
+      } else {
+        setError((prev) => ({
+          ...prev,
+          bp:
+            error.response?.data?.message || "Failed to update this bp record",
+        }));
+      }
     } finally {
       setLoading((prev) => ({ ...prev, bp: false }));
+      setEditingRecord(null);
     }
-  }
+  };
+
+  // cancel edit
+  const handleCancelEdit = () => {
+    setEditingRecord(null);
+    navigate("/bp");
+  };
 
   // Fetch data when token changes or component mounts
   useEffect(() => {
@@ -271,6 +328,7 @@ export const HealthDataProvider = ({ children }) => {
     timing,
     fasting,
     random,
+    editingRecord,
 
     // state
     loading,
@@ -284,6 +342,9 @@ export const HealthDataProvider = ({ children }) => {
     deleteBPRecord,
     deleteSugarRecord,
     editBPRecord,
+    handleEditClick,
+    handleEditFormChange,
+    handleCancelEdit,
     setSystolic,
     setDiastolic,
     setTiming,
