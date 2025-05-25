@@ -1,4 +1,4 @@
-import { registerUser, loginUser, logoutUser} from "../controller/userController.js";
+import { registerUser, loginUser} from "../controller/userController.js";
 // import { authMiddleware } from "../middlewares/authenticateMiddleware.js";
 import express from 'express';
 
@@ -9,10 +9,3 @@ userRoutes.post('/register', registerUser);
 
 // user login route 
 userRoutes.post('/login', loginUser);
-
-// user logout route
-userRoutes.post('/logout', logoutUser);
-
-// admin user route
-// userRoutes.post('/admin', createAdmin);
-

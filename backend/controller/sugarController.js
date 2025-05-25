@@ -45,28 +45,28 @@ export const addSugar = async (req, res) => {
 
 export const getSugar = async (req, res) => {
   try {
-    const user = req.userId;
-    console.log(user);
-    const sugar = await Sugar.find({ user }).sort({createdAt: -1});
+    const userId = req.userId;
+    console.log("Getting sugar data for userId:", userId);
 
-    console.log(sugar);
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
 
-    if (!sugar)
+    const sugar = await Sugar.find({ user:userId }).sort({createdAt: -1});
+
+    console.log("Found sugar recordes:", sugar);
+    console.log("Length of sugar recordes", sugar.length);
+
+    if (sugar.length === 0) {
       return res
-        .status(401)
-        .json({ message: "There is no diabetes data available for this user" });
+      .status(401)
+      .json({ message: "There is no diabetes data available for this user" });
+    }
     
     res.status(200).json({ sugar });
 
-    // const { fasting, random } = sugar;
-
-    // if (fasting) {
-    //   return res.status(200).json({ 'fasting': fasting });
-    // }
-    // if (random) {
-    //   return res.status(200).json({'random': random });
-    // }
   } catch (error) {
+    console.error('Error getting sugar data', error)
     return res
       .status(500)
       .json({ message: "There is something wrong", error: error.message });

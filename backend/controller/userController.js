@@ -77,15 +77,15 @@ export const loginUser = async (req, res) => {
 }
 
 
-export const logoutUser = async (req, res) => {
-  const { refreshToken } = req.body;
+// export const logoutUser = async (req, res) => {
+//   const { refreshToken } = req.body;
 
-  if(!refreshToken) return res.status(401).json({error: "Token required!"})
+//   if(!refreshToken) return res.status(401).json({error: "Token required!"})
 
-  await User.updateOne({ refreshToken }, { $unset: { refreshToken: 1 } });
+//   await User.updateOne({ refreshToken }, { $unset: { refreshToken: 1 } });
 
-  res.json({ message: 'You are logged out successfully' });
-}
+//   res.json({ message: 'You are logged out successfully' });
+// }
 
 export const createAdmin = async (req, res) => {
   const { fullName, userName, email, password } = req.body;
