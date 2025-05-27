@@ -15,6 +15,7 @@ export default function Dashboard() {
 
   const logout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userName");
     navigate("/signin");
   };
 

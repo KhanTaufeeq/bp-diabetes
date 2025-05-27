@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router";
 import React from "react";
-import { useHealthData } from "./HealthDataContext.jsx";
+import { useHealthData } from "./useHealthData";
 import editImage from "./assets/images/edit.svg";
 import deleteImage from "./assets/images/delete.svg";
-import EditBP from "./EditBP.jsx";
 
 function BP({ isDashBoard }) {
   const navigate = useNavigate();
@@ -12,6 +11,8 @@ function BP({ isDashBoard }) {
 
   // for DashBoard view
   const latestBp = getLatestBp();
+
+  console.log(latestBp);
 
   if (loading.bp) {
     return <p className="text-white">Loading BP data...</p>;
@@ -24,20 +25,28 @@ function BP({ isDashBoard }) {
   if (bpData.length === 0) {
     console.log("BP array: ", bpData);
     return (
-      <p className="text-white">No Blood Pressure data records found :(</p>
+      <div className="flex flex-col gap-5">
+        {
+          !isDashBoard && (<button onClick={() => navigate('/dashboard')} className="text-white cursor-pointer text-white bg-black p-1 w-30 rounded-xl">My Dashboard</button>)
+        }
+        <p className="text-white">No BP data records found :(</p>
+      </div>
     );
   }
 
   return (
     <div className={isDashBoard ? "" : "h-screen p-4"}>
       {!isDashBoard && (
-        <button
-          className="cursor-pointer text-white mb-5 bg-black p-1 w-30 rounded-xl"
+        <div className="flex justify-between items-center mb-5">
+          <button
+          className="cursor-pointer text-white bg-black p-1 w-30 rounded-xl"
           onClick={() => navigate("/dashboard")}
         >
           My Dashboard
           {console.log(isDashBoard)}
-        </button>
+          </button>
+          <p className="text-white rounded-xl">Number of data: {bpData.length}</p>
+        </div>
       )}
       <div>
         {isDashBoard

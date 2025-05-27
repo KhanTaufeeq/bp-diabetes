@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import editImage from './assets/images/edit.svg';
 import deleteImage from './assets/images/delete.svg';
-import { useHealthData } from "./HealthDataContext.jsx";
+import { useHealthData } from "./useHealthData";
 
 function Sugar({isDashBoard}) {
   const navigate = useNavigate();
@@ -21,21 +21,29 @@ function Sugar({isDashBoard}) {
     if (sugarData.length === 0) {
       console.log("Sugar array: ", sugarData);
       return (
-        <p className="text-white">No sugar data records found :(</p>
+        <div className="flex flex-col gap-5">
+          {
+            !isDashBoard && (<button onClick={() => navigate('/dashboard')} className="text-white cursor-pointer text-white bg-black p-1 w-30 rounded-xl">My Dashboard</button>)
+          }
+          <p className="text-white">No sugar data records found :(</p>
+        </div>
       );
     }
   
 
   return (
         <div className={isDashBoard ? "" : "h-screen p-4"}>
-          {!isDashBoard && (
-            <button
-              className="cursor-pointer text-white mb-5 bg-black p-1 w-30 rounded-xl"
+      {!isDashBoard && (
+        <div className="flex justify-between items-center mb-5">
+          <button
+              className="cursor-pointer text-white bg-black p-1 w-30 rounded-xl"
               onClick={() => navigate("/dashboard")}
             >
               My Dashboard
               {console.log(isDashBoard)}
-            </button>
+          </button>
+          <p className="text-white rounded-xl">Number of data: {sugarData.length}</p>
+        </div>
           )}
           <div>
             {isDashBoard

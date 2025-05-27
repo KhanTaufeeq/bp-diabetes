@@ -19,6 +19,7 @@ const ProtectedRoute = ({ children }) => {
     const decodedToken = jwtDecode(token);
     if (decodedToken.exp < Date.now() / 1000) {
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('userName');
       return <Navigate to='/signin' replace/>
     }
   } catch (error) {

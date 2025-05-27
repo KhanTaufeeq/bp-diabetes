@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, createContext } from "react";
+import { useState, useEffect, createContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 
@@ -8,11 +8,11 @@ const HealthDataContext = createContext();
 
 // custom hook to use the health data context
 
-export const useHealthData = () => useContext(HealthDataContext);
+// const useHealthData = () => useContext(HealthDataContext);
 
 // provider component
 
-export const HealthDataProvider = ({ children }) => {
+const HealthDataProvider = ({ children }) => {
   const navigate = useNavigate();
   const [bpData, setBPData] = useState([]);
   const [sugarData, setSugarData] = useState([]);
@@ -69,6 +69,7 @@ export const HealthDataProvider = ({ children }) => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      console.log(response.data);
       setBPData(response.data.bp);
 
       // clear any previous error value
@@ -96,6 +97,7 @@ export const HealthDataProvider = ({ children }) => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      console.log(accessToken);
       setSugarData(response.data.sugar);
 
       // remove previous sugar error data
@@ -128,6 +130,7 @@ export const HealthDataProvider = ({ children }) => {
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -154,12 +157,13 @@ export const HealthDataProvider = ({ children }) => {
       const response = await axios.post(
         "http://localhost:5000/api/sugar/add",
         {
-          fasting: parseInt(fasting),
-          random: parseInt(random),
+          fasting: parseFloat(fasting),
+          random: parseFloat(random),
         },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -403,12 +407,34 @@ export const HealthDataProvider = ({ children }) => {
   };
 
   // Fetch data when token changes or component mounts
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     fetchBpData();
+  //     fetchSugarData();
+  //   }
+  // }, [accessToken]);
+
   useEffect(() => {
-    if (accessToken) {
-      fetchBpData();
-      fetchSugarData();
-    }
+    console.log("=== useEffect TRIGGERED ===");
+    console.log("accessToken:", accessToken);
+    console.log("accessToken type:", typeof accessToken);
+    console.log("Timestamp:", new Date().toISOString());
+  
+    const fetchData = async () => {
+      if (accessToken) {
+        console.log("Calling fetchBpData and fetchSugarData");
+        await fetchBpData();
+        await fetchSugarData();
+      } else {
+        console.log("No accessToken, skipping fetch");
+      }
+    };
+  
+    fetchData();
+  
+    console.log("=== useEffect END ===");
   }, [accessToken]);
+  
 
   // values to share via context
   const contextValue = {
@@ -463,3 +489,6 @@ export const HealthDataProvider = ({ children }) => {
     </HealthDataContext.Provider>
   );
 };
+
+
+export { HealthDataProvider, HealthDataContext };

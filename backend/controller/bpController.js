@@ -1,4 +1,5 @@
 import { BP } from "../models/bpModel.js";
+import mongoose from "mongoose";
 
 export const addBP = async (req, res) => {
   const { systolic, diastolic, timing } = req.body;
@@ -41,28 +42,70 @@ export const addBP = async (req, res) => {
 export const getBP = async (req, res) => {
   try {
     const userId = req.userId;
-    console.log("Getting BP data for user:", userId);
+    console.log("===GET BP DEBUG ===");
+    console.log("Getting bp data for userId:", userId);
+    console.log("data type of userId:", typeof userId);
+    console.log("length of userId:", userId?.length);
 
     if (!userId) {
-      return res.status(401).json({ error: "User not authenticated" });
+      return res.status(401).json({ message: "User not authenticated" });
     }
 
-    const bp = await BP.find({ user:userId }).sort({ createdAt: -1 });
-    console.log("Found BP data", bp);
-    console.log("Length of BP data", bp.length);
+    // convert string to objectId for MongoDB query
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    const queryUserId = new mongoose.Types.ObjectId(userId);
+    console.log("Query UserId (ObjectId):", queryUserId);
+    console.log("Query UserId (String):", userId);
+
+    // Debug: What's in the database?
+    console.log("Checking all bp records in the database");
+    const allBP = await BP.find({}).limit(5);
+    console.log(
+      "Sample bp records:",
+      allBP.map((s) => ({
+        _id: s._id,
+        user: s.user,
+        userTypeof: typeof s.user,
+        createdAt: s.createdAt,
+      }))
+    );
+
+    // execute the query with objectId
+    console.log("Executing query with ObjectId:", { user: queryUserId });
+    const bp = await BP.find({ user: queryUserId }).sort({ createdAt: -1 });
+
+    console.log("Found BP records", bp.length);
+
+    if (bp.length > 0) {
+      console.log(
+        "First few records:",
+        bp.slice(0, 2).map((s) => ({
+          _id: s._id,
+          user: s.user,
+          createdAt: s.createdAt,
+        }))
+      );
+      return res
+        .status(200)
+        .json({ bp, message: "BP data fetched successfully" });
+    }
+
+    console.log("===========================");
 
     if (bp.length === 0) {
-      return res.status(401).json({ error: "BP data not found for this user" });
+      return res.status(200).json({
+        bp: [],
+        message: "No bp data available for this user",
+      });
     }
-    return res
-      .status(200)
-      .json({ message: "The BP data has been fetched successfully", bp });
-    
   } catch (error) {
-    console.log('Error getting BP data', error);
-    return res
-      .status(500)
-      .json({ message: "something went wrong", error: error.message });
+    console.log("Error getting bp data", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
 
@@ -111,12 +154,10 @@ export const editBP = async (req, res) => {
       bpRecord.timing = timing;
     }
     await bpRecord.save();
-    return res
-      .status(200)
-      .json({
-        message: "BP record has been updated successfully",
-        data: bpRecord,
-      });
+    return res.status(200).json({
+      message: "BP record has been updated successfully",
+      data: bpRecord,
+    });
   } catch (error) {
     console.error("Error updating BP record", error);
     return res.status(500).json({ error: "Internal server error" });

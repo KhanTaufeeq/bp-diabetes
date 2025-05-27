@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { useHealthData } from "./HealthDataContext";
+import { useHealthData } from "./useHealthData";
 
 function AddSugar() {
   const { setFasting, setRandom, addSugarRecord } = useHealthData();
