@@ -18,19 +18,97 @@ const HealthDataProvider = ({ children }) => {
   const [sugarData, setSugarData] = useState([]);
   const [loading, setLoading] = useState({ bp: false, sugar: false });
   const [error, setError] = useState({ bp: null, sugar: null });
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
   const [systolic, setSystolic] = useState(0);
   const [diastolic, setDiastolic] = useState(0);
   const [timing, setTiming] = useState("morning");
   const [fasting, setFasting] = useState(0);
   const [random, setRandom] = useState(0);
-  const [editingRecord, setEditingRecord] = useState({ systolic: '', diastolic: '', timing: 'morning' });
-  const [editingSugarRecord, setEditingSugarRecord] = useState({ fasting: '', random: '' });
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [registerUserName, setRegisterUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [editingRecord, setEditingRecord] = useState({
+    systolic: "",
+    diastolic: "",
+    timing: "morning",
+  });
+  const [editingSugarRecord, setEditingSugarRecord] = useState({
+    fasting: "",
+    random: "",
+  });
 
   // authentication token
 
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem("accessToken")
   );
+
+  const registration = async (e) => {
+    e.preventDefault();
+
+    if (!fullName || !registerUserName || !email || !registerPassword) {
+      setAuthError("Please fill in all fields");
+    }
+    setAuthLoading(true);
+    setAuthError("");
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/user/register", {
+        fullName: fullName,
+        userName: registerUserName,
+        email: email,
+        password: registerPassword,
+      });
+      console.log(res.data);
+      setFullName("");
+      setRegisterUserName("");
+      setEmail("");
+      setRegisterPassword("");
+      navigate("/signin");
+    } catch (error) {
+      setAuthError(error.response?.data?.message || 'Registration Failed');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const signInUser = async (e) => {
+    e.preventDefault();
+
+    if (!userName || !password) {
+      setAuthError("Please fill in all fields");
+    }
+
+    setAuthLoading(true);
+    setAuthError("");
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/user/login", {
+        userName,
+        password,
+      });
+      console.log(res.data);
+
+      // clear previous data
+      setUserName('');
+      setPassword('');
+      setBPData([]);
+      setSugarData([]);
+
+      // Set new user
+      localStorage.setItem("accessToken", res.data.accessToken);
+      localStorage.setItem("userName", userName);
+      window.location.href = "/dashboard";
+    } catch (error) {
+      setAuthError(error.response?.data?.message || "Login Failed");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
 
   // update token if it changes in local storage
 
@@ -95,6 +173,7 @@ const HealthDataProvider = ({ children }) => {
       const response = await axios.get("http://localhost:5000/api/sugar", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
         },
       });
       console.log(accessToken);
@@ -130,7 +209,7 @@ const HealthDataProvider = ({ children }) => {
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
@@ -163,7 +242,7 @@ const HealthDataProvider = ({ children }) => {
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
@@ -241,10 +320,10 @@ const HealthDataProvider = ({ children }) => {
   const handleEditClick = (record) => {
     console.log(record);
     setEditingRecord({
-      systolic: record.systolic || '',
-      diastolic: record.diastolic || '',
-      timing: record.timing || 'morning',
-      _id: record._id
+      systolic: record.systolic || "",
+      diastolic: record.diastolic || "",
+      timing: record.timing || "morning",
+      _id: record._id,
     });
     navigate("/editBp");
   };
@@ -252,18 +331,18 @@ const HealthDataProvider = ({ children }) => {
   const handleSugarEditClick = (record) => {
     console.log(record);
     setEditingSugarRecord({
-      fasting: record.fasting || '',
-      random: record.random || '',
-      _id: record._id
+      fasting: record.fasting || "",
+      random: record.random || "",
+      _id: record._id,
     });
     navigate("/editSugar");
-  }; 
+  };
 
   // when the user changes the values in edit form
   const handleEditFormChange = (e) => {
     const { name, value } = e.target;
     if (!editingRecord) {
-      console.warn('No editing record available');
+      console.warn("No editing record available");
       return;
     }
     setEditingRecord({ ...editingRecord, [name]: value });
@@ -272,7 +351,7 @@ const HealthDataProvider = ({ children }) => {
   const handleSugarEditFormChange = (e) => {
     const { name, value } = e.target;
     if (!editingSugarRecord) {
-      console.warn('No editing record available');
+      console.warn("No editing record available");
       return;
     }
     setEditingSugarRecord({ ...editingSugarRecord, [name]: value });
@@ -386,7 +465,8 @@ const HealthDataProvider = ({ children }) => {
         setError((prev) => ({
           ...prev,
           bp:
-            error.response?.data?.message || "Failed to update this sugar record",
+            error.response?.data?.message ||
+            "Failed to update this sugar record",
         }));
       }
     } finally {
@@ -419,7 +499,7 @@ const HealthDataProvider = ({ children }) => {
     console.log("accessToken:", accessToken);
     console.log("accessToken type:", typeof accessToken);
     console.log("Timestamp:", new Date().toISOString());
-  
+
     const fetchData = async () => {
       if (accessToken) {
         console.log("Calling fetchBpData and fetchSugarData");
@@ -429,12 +509,11 @@ const HealthDataProvider = ({ children }) => {
         console.log("No accessToken, skipping fetch");
       }
     };
-  
+
     fetchData();
-  
+
     console.log("=== useEffect END ===");
   }, [accessToken]);
-  
 
   // values to share via context
   const contextValue = {
@@ -452,8 +531,12 @@ const HealthDataProvider = ({ children }) => {
     // state
     loading,
     error,
+    authLoading,
+    authError,
 
     // actions
+    registration,
+    signInUser,
     fetchBpData,
     fetchSugarData,
     addBpRecord,
@@ -473,6 +556,12 @@ const HealthDataProvider = ({ children }) => {
     setTiming,
     setFasting,
     setRandom,
+    setUserName,
+    setPassword,
+    setRegisterPassword,
+    setRegisterUserName,
+    setFullName,
+    setEmail,
 
     // authentication
     accessToken,
@@ -489,6 +578,5 @@ const HealthDataProvider = ({ children }) => {
     </HealthDataContext.Provider>
   );
 };
-
 
 export { HealthDataProvider, HealthDataContext };

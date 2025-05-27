@@ -1,37 +1,18 @@
 import React from "react";
-import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router";
 import { Link } from "react-router";
+import { useHealthData } from "./useHealthData";
 
 function Register() {
-  const [fullName, setFullName] = useState("");
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
-  const registration = (e) => {
-    e.preventDefault();
-    axios
-      .post("http://localhost:5000/api/user/register", {
-        'fullName': fullName,
-        'userName': userName,
-        'email': email,
-        'password': password,
-      })
-      .then((res) => {
-        console.log(res.data);
-        setFullName("");
-        setUserName("");
-        setEmail("");
-        setPassword("");
-        navigate("/signin");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const { registration, setFullName, setEmail, setRegisterPassword, setRegisterUserName, authLoading, authError } = useHealthData();
+
+  if (authLoading) {
+    return <p className="text-white">Loading Login...!</p>
+  }
+
+  if (authError) {
+    return <p className="text-white">{authError}</p>
+  }
 
   return (
     <div className="flex box-border justify-center items-center bg-black p-4 rounded-xl w-[60%]">
@@ -39,7 +20,7 @@ function Register() {
         Register Now!
       </h1>
       <div className="flex-1 text-white">
-        <form onSubmit={registration}>
+        <form onSubmit={(e) => registration(e)}>
           <div>
             <label
               htmlFor="fullName"
@@ -67,7 +48,7 @@ function Register() {
               name="user-name"
               id="userName"
               className="bg-[#242424] outline-none p-1 rounded"
-              onChange={(event) => setUserName(event.target.value)}
+              onChange={(event) => setRegisterUserName(event.target.value)}
             />
           </div>
           <div>
@@ -97,7 +78,7 @@ function Register() {
               name="password"
               id="password"
               className="bg-[#242424] outline-none p-1 rounded"
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) => setRegisterPassword(event.target.value)}
             />
           </div>
           <button type="submit" className="cursor-pointer">

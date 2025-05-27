@@ -1,37 +1,24 @@
 import React from "react";
-import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router";
+import { useHealthData } from "./useHealthData";
 
 function Signin() {
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const { signInUser, authError, authLoading, setUserName, setPassword } = useHealthData();
 
-  const signInUser = (e) => {
-    e.preventDefault();
-    axios
-      .post("http://localhost:5000/api/user/login", {
-        'userName': userName,
-        'password': password,
-      })
-      .then((res) => {
-        console.log(res.data);
-        localStorage.setItem('accessToken', res.data.accessToken);
-        localStorage.setItem('userName', userName);
-        navigate("/dashboard");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  if (authLoading) {
+    return <p className="text-white">Loading Login...!</p>
+  }
+
+  if (authError) {
+    return <p className="text-white">{authError}</p>
+  }
+
   return (
     <div className="flex box-border justify-center items-center bg-black p-4 rounded-xl w-[60%]">
       <h1 className="text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl flex-1 text-center">
         Login Please!
       </h1>
       <div className="flex-1 text-white">
-        <form onSubmit={signInUser}>
+        <form onSubmit={(e) => signInUser(e)}>
           <div>
             <label
               htmlFor="userName"
