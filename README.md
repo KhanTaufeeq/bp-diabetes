@@ -107,21 +107,21 @@ bp-diabetes/
 
      ├── models/
 
-   ├── routes/
+     ├── routes/
 
-   ├── middleware/
+     ├── middleware/
 
-   └── controllers/
+     └── controllers/
 
 ├── frontend/
 
-   ├── components/
+     ├── components/
 
-   ├── pages/
+     ├── pages/
 
-   ├── context/
+     ├── context/
 
-   └── utils/
+     └── utils/
 
 📌 To Do (Optional Enhancements)
 
