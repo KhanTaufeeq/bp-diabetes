@@ -1,4 +1,4 @@
-BP-Diabetes Tracker
+# BP-Diabetes Tracker
 A full-stack web application to help users track their blood pressure (BP) and diabetes (sugar) levels. The app allows users to register, securely log in, and manage their personal health data.
 
 🛠 Tech Stack
@@ -59,7 +59,7 @@ Copy
 Edit
 cd backend
 npm install
-# create a .env file and add your MongoDB URI and JWT_SECRET
+### create a .env file and add your MongoDB URI and JWT_SECRET
 npm start
 Frontend Setup
 bash
