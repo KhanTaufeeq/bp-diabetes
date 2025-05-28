@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router";
 import { useHealthData } from "./useHealthData";
 
 function Signin() {
@@ -13,16 +14,16 @@ function Signin() {
   }
 
   return (
-    <div className="flex box-border justify-center items-center bg-black p-4 rounded-xl w-[60%]">
-      <h1 className="text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl flex-1 text-center">
+    <div className="box-border pl-4 pr-4 rounded-xl w-[100%]">
+      <h1 className="text-white text-2xl flex-1 text-center bg-black mb-5 pt-2 pb-2 rounded-xl font-bold">
         Login Please!
       </h1>
-      <div className="flex-1 text-white">
+      <div className="flex-1 text-white bg-black pt-4 pb-4 pl-2 pr-2 rounded-xl">
         <form onSubmit={(e) => signInUser(e)}>
-          <div>
+          <div className="flex items-center justify-between w-[95%] ml-auto mr-auto">
             <label
               htmlFor="userName"
-              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl"
+              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl font-bold"
             >
               UserName
             </label>
@@ -32,12 +33,13 @@ function Signin() {
               id="userName"
               className="bg-[#242424] outline-none p-1 rounded"
               onChange={(event) => setUserName(event.target.value)}
+              placeholder="Enter User Name..."
             />
           </div>
-          <div className="mt-4 mb-4">
+          <div className="mt-4 mb-6 flex items-center justify-between w-[95%] ml-auto mr-auto">
             <label
               htmlFor="password"
-              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl"
+              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl font-bold"
             >
               Password
             </label>
@@ -47,15 +49,16 @@ function Signin() {
               id="password"
               className="bg-[#242424] outline-none p-1 rounded"
               onChange={(event) => setPassword(event.target.value)}
+              placeholder="Enter Password..."
             />
           </div>
-          <button type="submit" className="cursor-pointer">
+          <div className="flex justify-center items-center gap-5 mt-10">
+          <button type="submit" className="cursor-pointer bg-[#242424] p-2 w-[30%] rounded-xl font-bold">
             Login
           </button>
+          <Link to='/' className="underline">Not a member?</Link>
+          </div>
         </form>
-        <button type="button" className="cursor-pointer ml-5" onClick={() => navigate('/')}>
-            Not a member?
-          </button>
       </div>
     </div>
   );

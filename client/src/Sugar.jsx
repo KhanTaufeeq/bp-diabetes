@@ -5,7 +5,7 @@ import { useHealthData } from "./useHealthData";
 
 function Sugar({isDashBoard}) {
   const navigate = useNavigate();
-  const { sugarData, getLatestSugar, loading, error,deleteSugarRecord, handleSugarEditClick } = useHealthData();
+  const { sugarData, getLatestSugar, loading, error,deleteSugarRecord, handleSugarEditClick, normalizeTimeStamp } = useHealthData();
 
     // for DashBoard view
     const latestSugar = getLatestSugar();
@@ -34,15 +34,15 @@ function Sugar({isDashBoard}) {
   return (
         <div className={isDashBoard ? "" : "h-screen p-4"}>
       {!isDashBoard && (
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex gap-5 items-center mb-5">
           <button
-              className="cursor-pointer text-white bg-black p-1 w-30 rounded-xl"
+              className="cursor-pointer text-white bg-[#a75265] p-2 w-35 rounded-xl font-bold hover:bg-pink-700"
               onClick={() => navigate("/dashboard")}
             >
               My Dashboard
               {console.log(isDashBoard)}
           </button>
-          <p className="text-white rounded-xl">Number of data: {sugarData.length}</p>
+          <p className="text-white rounded-xl font-bold">Number of data: {sugarData.length}</p>
         </div>
           )}
           <div>
@@ -51,12 +51,12 @@ function Sugar({isDashBoard}) {
                 latestSugar && (
                   <>
                     <p className="text-white text-2xl">
-                      Fasting: {latestSugar.fasting}
+                      Fasting: <span className="font-bold">{latestSugar.fasting}</span>
                     </p>
                     <p className="text-white text-2xl">
-                      Random: {latestSugar.random}
+                      Random: <span className="font-bold">{latestSugar.random}</span>
                     </p>
-                    <p className="text-white">Date & Time: {latestSugar.createdAt}</p>
+                    <p className="text-white">Date & Time: {normalizeTimeStamp(latestSugar.createdAt)}</p>
                   </>
                 )
               : // full sugar page view, shows all records
@@ -66,9 +66,9 @@ function Sugar({isDashBoard}) {
                       key={data._id}
                       className="bg-black p-4 rounded-xl mb-2 relative"
                     >
-                      <p className="text-white">Fasting: {data.fasting}</p>
-                      <p className="text-white">Random: {data.random}</p>
-                      <p className="text-white">Date & Time: {data.createdAt}</p>
+                      <p className="text-white">Fasting: <span className="font-bold">{data.fasting}</span></p>
+                      <p className="text-white">Random: <span className="font-bold">{data.random}</span></p>
+                      <p className="text-white">Date & Time: {normalizeTimeStamp(data.createdAt)}</p>
                       <img
                         src={editImage}
                         alt="menu"

@@ -14,6 +14,8 @@ const HealthDataContext = createContext();
 
 const HealthDataProvider = ({ children }) => {
   const navigate = useNavigate();
+  const [isAddSugar, setIsAddSugar] = useState(false);
+  const [isAddBP, setIsAddBP] = useState(false);
   const [bpData, setBPData] = useState([]);
   const [sugarData, setSugarData] = useState([]);
   const [loading, setLoading] = useState({ bp: false, sugar: false });
@@ -42,6 +44,20 @@ const HealthDataProvider = ({ children }) => {
   });
 
   // authentication token
+
+  const normalizeTimeStamp = (timestamp) => {
+    const date = new Date(timestamp);
+
+    // always display in IST regardless of how it is stored
+    return date.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem("accessToken")
@@ -192,6 +208,21 @@ const HealthDataProvider = ({ children }) => {
     }
   };
 
+  const toggleAddSugar = () => {
+    if (isAddSugar == true) {
+      setIsAddSugar(false);
+    } else {
+      setIsAddSugar(true);
+    }
+  };
+  const toggleAddBP = () => {
+    if (isAddBP == true) {
+      setIsAddBP(false);
+    } else {
+      setIsAddBP(true);
+    }
+  };
+
   const addBpRecord = async (e) => {
     e.preventDefault();
     if (!accessToken) return;
@@ -214,7 +245,7 @@ const HealthDataProvider = ({ children }) => {
         }
       );
       console.log(response);
-
+      setIsAddBP(false);
       // refresh BP data after adding new record
       fetchBpData();
       setError((prev) => ({ ...prev, bp: null }));
@@ -247,7 +278,7 @@ const HealthDataProvider = ({ children }) => {
         }
       );
       console.log(response);
-
+      setIsAddSugar(false);
       // refresh Sugar data after adding new record
       fetchSugarData();
       setError((prev) => ({ ...prev, sugar: null }));
@@ -533,6 +564,8 @@ const HealthDataProvider = ({ children }) => {
     error,
     authLoading,
     authError,
+    isAddSugar,
+    isAddBP,
 
     // actions
     registration,
@@ -551,6 +584,11 @@ const HealthDataProvider = ({ children }) => {
     handleSugarEditFormChange,
     handleSugarCancelEdit,
     editSugarRecord,
+    normalizeTimeStamp,
+    toggleAddBP,
+    toggleAddSugar,
+    setIsAddSugar,
+    setIsAddBP,
     setSystolic,
     setDiastolic,
     setTiming,

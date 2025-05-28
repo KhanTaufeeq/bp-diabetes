@@ -15,16 +15,16 @@ function Register() {
   }
 
   return (
-    <div className="flex box-border justify-center items-center bg-black p-4 rounded-xl w-[60%]">
-      <h1 className="text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl flex-1 text-center">
+    <div className="box-border pl-4 pr-4 rounded-xl w-[100%]">
+      <h1 className="text-white text-2xl flex-1 text-center bg-black mb-5 pt-2 pb-2 rounded-xl font-bold">
         Register Now!
       </h1>
-      <div className="flex-1 text-white">
+      <div className="flex-1 text-white bg-black pt-5 pb-5 pl-2 pr-2 rounded-xl">
         <form onSubmit={(e) => registration(e)}>
-          <div>
+          <div className="flex items-center justify-between w-[95%] ml-auto mr-auto">
             <label
               htmlFor="fullName"
-              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl"
+              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl font-bold"
             >
               Full Name
             </label>
@@ -34,12 +34,13 @@ function Register() {
               id="fullName"
               className="bg-[#242424] outline-none p-1 rounded"
               onChange={(event) => setFullName(event.target.value)}
+              placeholder="Enter Full Name..."
             />
           </div>
-          <div className="mt-4 mb-4">
+          <div className="mt-4 mb-4 flex items-center justify-between w-[95%] ml-auto mr-auto">
             <label
               htmlFor="userName"
-              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl"
+              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl font-bold"
             >
               User Name
             </label>
@@ -49,12 +50,13 @@ function Register() {
               id="userName"
               className="bg-[#242424] outline-none p-1 rounded"
               onChange={(event) => setRegisterUserName(event.target.value)}
+              placeholder="Enter User Name..."
             />
           </div>
-          <div>
+          <div className="flex items-center justify-between w-[95%] ml-auto mr-auto">
             <label
               htmlFor="email"
-              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl"
+              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl font-bold"
             >
               Email
             </label>
@@ -64,12 +66,13 @@ function Register() {
               id="email"
               className="bg-[#242424] outline-none p-1 rounded"
               onChange={(event) => setEmail(event.target.value)}
+              placeholder="Enter Email..."
             />
           </div>
-          <div className="mb-4 mt-4">
+          <div className="mb-4 mt-4 flex items-center justify-between w-[95%] ml-auto mr-auto">
             <label
               htmlFor="password"
-              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl"
+              className="text-base sm:text-xs md:text-sm lg:text-lg xl:text-xl font-bold"
             >
               Password
             </label>
@@ -79,13 +82,15 @@ function Register() {
               id="password"
               className="bg-[#242424] outline-none p-1 rounded"
               onChange={(event) => setRegisterPassword(event.target.value)}
+              placeholder="Enter Password..."
             />
           </div>
-          <button type="submit" className="cursor-pointer">
+          <div className="flex items-center justify-center gap-5 mt-10">
+          <button type="submit" className="cursor-pointer bg-[#242424] w-[30%] font-bold rounded-xl pt-2 pb-2">
             Register
           </button>
-          <br/>
-          <Link to='/signin'>Already a member?</Link>
+          <Link to='/signin' className="underline">Already a member?</Link>
+          </div>
         </form>
       </div>
     </div>

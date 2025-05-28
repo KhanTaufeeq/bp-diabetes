@@ -7,7 +7,7 @@ import deleteImage from "./assets/images/delete.svg";
 function BP({ isDashBoard }) {
   const navigate = useNavigate();
 
-  const { loading, error, bpData, getLatestBp, handleEditClick, deleteBPRecord} = useHealthData();
+  const { loading, error, bpData, getLatestBp, handleEditClick, deleteBPRecord, normalizeTimeStamp} = useHealthData();
 
   // for DashBoard view
   const latestBp = getLatestBp();
@@ -37,15 +37,15 @@ function BP({ isDashBoard }) {
   return (
     <div className={isDashBoard ? "" : "h-screen p-4"}>
       {!isDashBoard && (
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex gap-5 items-center mb-5">
           <button
-          className="cursor-pointer text-white bg-black p-1 w-30 rounded-xl"
+          className="cursor-pointer text-white bg-[#a75265] p-2 w-35 rounded-xl font-bold hover:bg-pink-700"
           onClick={() => navigate("/dashboard")}
         >
           My Dashboard
           {console.log(isDashBoard)}
           </button>
-          <p className="text-white rounded-xl">Number of data: {bpData.length}</p>
+          <p className="text-white rounded-xl font-bold">Number of data: {bpData.length}</p>
         </div>
       )}
       <div>
@@ -54,12 +54,12 @@ function BP({ isDashBoard }) {
             latestBp && (
               <>
                 <p className="text-white text-2xl">
-                  Systolic: {latestBp.systolic}
+                  Systolic: <span className="font-bold">{latestBp.systolic}</span>
                 </p>
                 <p className="text-white text-2xl">
-                  Diastolic: {latestBp.diastolic}
+                  Diastolic: <span className="font-bold">{latestBp.diastolic}</span>
                 </p>
-                <p className="text-white">Date & Time: {latestBp.createdAt}</p>
+                <p className="text-white">Date & Time: {normalizeTimeStamp(latestBp.createdAt)}</p>
               </>
             )
           : // full BP page view, shows all records
@@ -69,10 +69,10 @@ function BP({ isDashBoard }) {
                   key={data._id}
                   className="bg-black p-4 rounded-xl mb-2 relative"
                 >
-                  <p className="text-white">Systolic: {data.systolic}</p>
-                  <p className="text-white">Diastolic: {data.diastolic}</p>
+                  <p className="text-white">Systolic: <span className="font-bold">{data.systolic}</span></p>
+                  <p className="text-white">Diastolic: <span className="font-bold">{data.diastolic}</span></p>
                   <p className="text-white">Timing: {data.timing}</p>
-                  <p className="text-white">Date & Time: {data.createdAt}</p>
+                  <p className="text-white">Date & Time: {normalizeTimeStamp(data.createdAt)}</p>
                   <img
                     src={editImage}
                     alt="menu"
