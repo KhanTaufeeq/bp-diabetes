@@ -19,7 +19,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div>
+    <div className="w-[90%] sm:w-[90%] md:w-[70%] lg:w-[40%]">
       <h1 className="text-white text-center mb-4 text-3xl bg-black p-2 rounded-xl">
         Hi <span className="italic">{userName}</span>, Welcome!
       </h1>

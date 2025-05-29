@@ -35,9 +35,9 @@ function BP({ isDashBoard }) {
   }
 
   return (
-    <div className={isDashBoard ? "" : "h-screen p-4"}>
+    <div className={isDashBoard ? "" : "h-screen p-4 lg:w-[40%]"}>
       {!isDashBoard && (
-        <div className="flex gap-5 items-center mb-5">
+        <div className="flex justify-between items-center mb-5">
           <button
           className="cursor-pointer text-white bg-[#a75265] p-2 w-35 rounded-xl font-bold hover:bg-pink-700"
           onClick={() => navigate("/dashboard")}
@@ -53,13 +53,13 @@ function BP({ isDashBoard }) {
           ? // DashBoard view - only latest BP
             latestBp && (
               <>
-                <p className="text-white text-2xl">
+                <p className="text-white text-2xl sm:text-2xl md:text-3xl lg:text-4xl">
                   Systolic: <span className="font-bold">{latestBp.systolic}</span>
                 </p>
-                <p className="text-white text-2xl">
+                <p className="text-white text-2xl sm:text-2xl md:text-3xl lg:text-4xl">
                   Diastolic: <span className="font-bold">{latestBp.diastolic}</span>
                 </p>
-                <p className="text-white">Date & Time: {normalizeTimeStamp(latestBp.createdAt)}</p>
+                <p className="text-white mt-5">Date & Time: {normalizeTimeStamp(latestBp.createdAt)}</p>
               </>
             )
           : // full BP page view, shows all records
@@ -67,12 +67,12 @@ function BP({ isDashBoard }) {
               return (
                 <div
                   key={data._id}
-                  className="bg-black p-4 rounded-xl mb-2 relative"
+                  className="bg-black p-4 rounded-xl mb-2 relative lg:w-[100%]"
                 >
-                  <p className="text-white">Systolic: <span className="font-bold">{data.systolic}</span></p>
-                  <p className="text-white">Diastolic: <span className="font-bold">{data.diastolic}</span></p>
-                  <p className="text-white">Timing: {data.timing}</p>
-                  <p className="text-white">Date & Time: {normalizeTimeStamp(data.createdAt)}</p>
+                  <p className="text-white lg:text-2xl">Systolic: <span className="font-bold">{data.systolic}</span></p>
+                  <p className="text-white lg:text-2xl">Diastolic: <span className="font-bold">{data.diastolic}</span></p>
+                  <p className="text-white lg:text-2xl">Timing: {data.timing}</p>
+                  <p className="text-white lg:text-2xl">Date & Time: {normalizeTimeStamp(data.createdAt)}</p>
                   <img
                     src={editImage}
                     alt="menu"

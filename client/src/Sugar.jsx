@@ -32,9 +32,9 @@ function Sugar({isDashBoard}) {
   
 
   return (
-        <div className={isDashBoard ? "" : "h-screen p-4"}>
+        <div className={isDashBoard ? "" : "h-screen p-4 lg:w-[40%]"}>
       {!isDashBoard && (
-        <div className="flex gap-5 items-center mb-5">
+        <div className="flex justify-between items-center mb-5">
           <button
               className="cursor-pointer text-white bg-[#a75265] p-2 w-35 rounded-xl font-bold hover:bg-pink-700"
               onClick={() => navigate("/dashboard")}
@@ -50,13 +50,13 @@ function Sugar({isDashBoard}) {
               ? // DashBoard view - only latest Sugar
                 latestSugar && (
                   <>
-                    <p className="text-white text-2xl">
+                    <p className="text-white text-2xl sm:text-2xl md:text-3xl lg:text-4xl">
                       Fasting: <span className="font-bold">{latestSugar.fasting}</span>
                     </p>
-                    <p className="text-white text-2xl">
+                    <p className="text-white text-2xl sm:text-2xl md:text-3xl lg:text-4xl">
                       Random: <span className="font-bold">{latestSugar.random}</span>
                     </p>
-                    <p className="text-white">Date & Time: {normalizeTimeStamp(latestSugar.createdAt)}</p>
+                    <p className="text-white mt-5">Date & Time: {normalizeTimeStamp(latestSugar.createdAt)}</p>
                   </>
                 )
               : // full sugar page view, shows all records
@@ -66,9 +66,9 @@ function Sugar({isDashBoard}) {
                       key={data._id}
                       className="bg-black p-4 rounded-xl mb-2 relative"
                     >
-                      <p className="text-white">Fasting: <span className="font-bold">{data.fasting}</span></p>
-                      <p className="text-white">Random: <span className="font-bold">{data.random}</span></p>
-                      <p className="text-white">Date & Time: {normalizeTimeStamp(data.createdAt)}</p>
+                      <p className="text-white lg:text-2xl">Fasting: <span className="font-bold">{data.fasting}</span></p>
+                      <p className="text-white lg:text-2xl">Random: <span className="font-bold">{data.random}</span></p>
+                      <p className="text-white lg:text-2xl">Date & Time: {normalizeTimeStamp(data.createdAt)}</p>
                       <img
                         src={editImage}
                         alt="menu"

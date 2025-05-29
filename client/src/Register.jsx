@@ -15,7 +15,7 @@ function Register() {
   }
 
   return (
-    <div className="box-border pl-4 pr-4 rounded-xl w-[100%]">
+    <div className="box-border pl-4 pr-4 rounded-xl w-[90%] md:w-[70%] lg:w-[40%]">
       <h1 className="text-white text-2xl flex-1 text-center bg-black mb-5 pt-2 pb-2 rounded-xl font-bold">
         Register Now!
       </h1>
